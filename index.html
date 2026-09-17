@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>23班｜國三家長資訊入口</title>
+<meta name="description" content="23班國三家長資訊入口：重大行事曆、段考與模擬考成績查詢、多元40分、升學資訊、班級收支公告。">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="23班｜國三家長資訊入口">
+<meta property="og:description" content="孩子升學路上的重要資訊，集中在這裡。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   設計代號（Design tokens）
+   日後若要調整配色，只需修改這一區
+   ============================================================ */
+:root{
+  --ink:        #16304d;   /* 深藍：主標題、主色塊 */
+  --ink-soft:   #24486d;   /* 次深藍 */
+  --slate:      #4b6076;   /* 灰藍：說明文字 */
+  --paper:      #f5f3ed;   /* 米白：頁面背景 */
+  --surface:    #ffffff;   /* 卡片底色 */
+  --line:       #dde3ea;   /* 分隔線、卡片邊框 */
+  --green:      #2e7a63;   /* 淡綠：成績／多元區重點 */
+  --green-soft: #e7f1ed;
+  --warm:       #b85f2c;   /* 少量暖色：升學資訊重點 */
+  --warm-soft:  #f8ece4;
+  --shadow:     0 1px 2px rgba(22,48,77,.06), 0 6px 18px rgba(22,48,77,.07);
+  --shadow-lift:0 2px 4px rgba(22,48,77,.08), 0 12px 28px rgba(22,48,77,.12);
+  --radius:     14px;
+  --maxw:       760px;
+}
+/* 深色模式：讓在 LINE 深色瀏覽器中開啟也清楚可讀 */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:        #dce7f2;
+    --ink-soft:   #b9cde0;
+    --slate:      #a8bbcd;
+    --paper:      #111b25;
+    --surface:    #1a2733;
+    --line:       #2c3d4e;
+    --green:      #7fc9ac;
+    --green-soft: #1d3430;
+    --warm:       #e0a075;
+    --warm-soft:  #33261d;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+    --shadow-lift:0 2px 4px rgba(0,0,0,.45), 0 12px 28px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#dce7f2; --ink-soft:#b9cde0; --slate:#a8bbcd; --paper:#111b25;
+  --surface:#1a2733; --line:#2c3d4e; --green:#7fc9ac; --green-soft:#1d3430;
+  --warm:#e0a075; --warm-soft:#33261d;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+  --shadow-lift:0 2px 4px rgba(0,0,0,.45), 0 12px 28px rgba(0,0,0,.5);
+}
+
+/* ============================================================
+   基本設定
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;
+  line-height:1.7;
+  overflow-x:hidden;            /* 確保手機不出現橫向捲軸 */
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;}
+a{color:inherit;}
+.wrap{
+  width:100%;
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:0 18px;
+}
+:focus-visible{
+  outline:3px solid var(--warm);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+/* ============================================================
+   首屏：班級標題 ＋ 說明 ＋ 常用功能
+   ============================================================ */
+.hero{
+  background:linear-gradient(180deg,#16304d 0%,#1d3d60 100%);
+  color:#fff;
+  padding:30px 0 26px;
+  border-bottom:4px solid var(--green);
+}
+.hero .class-tag{
+  display:inline-block;
+  font-size:14px;
+  font-weight:500;
+  letter-spacing:.06em;
+  background:rgba(255,255,255,.15);
+  border-radius:999px;
+  padding:4px 13px;
+  margin-bottom:12px;
+}
+.hero h1{
+  margin:0 0 8px;
+  font-size:27px;
+  line-height:1.35;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+.hero p{
+  margin:0;
+  font-size:16px;
+  color:#cfdcea;
+  line-height:1.6;
+}
+
+/* 家長常用功能 */
+.quick{
+  margin-top:22px;
+}
+.quick h2{
+  margin:0 0 10px;
+  font-size:15px;
+  font-weight:500;
+  color:#b9cde0;
+}
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+.quick-btn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:52px;
+  padding:10px 12px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:12px;
+  color:#fff;
+  font-size:16px;
+  font-weight:500;
+  text-decoration:none;
+  transition:background .15s ease;
+}
+.quick-btn .ico{font-size:20px;line-height:1;}
+.quick-btn:hover,.quick-btn:focus-visible{background:rgba(255,255,255,.24);}
+.quick-btn:active{background:rgba(255,255,255,.32);}
+
+/* ============================================================
+   區塊與卡片
+   ============================================================ */
+main{padding:26px 0 8px;}
+.section{margin-bottom:28px;}
+.section-head{
+  display:flex;
+  align-items:baseline;
+  gap:9px;
+  margin:0 0 12px;
+  padding-bottom:9px;
+  border-bottom:1px solid var(--line);
+}
+.section-head h2{
+  margin:0;
+  font-size:19px;
+  font-weight:700;
+  color:var(--ink);
+}
+.section-head .hint{
+  font-size:14px;
+  color:var(--slate);
+  font-weight:400;
+}
+.cards{
+  display:grid;
+  grid-template-columns:1fr;         /* 手機：1 欄 */
+  gap:13px;
+}
+.card{
+  display:block;
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:17px 17px 15px;
+  text-decoration:none;
+  color:inherit;
+  box-shadow:var(--shadow);
+  transition:box-shadow .16s ease, transform .16s ease, border-color .16s ease;
+}
+.card:hover,.card:focus-visible{
+  box-shadow:var(--shadow-lift);
+  transform:translateY(-2px);
+  border-color:var(--ink-soft);
+}
+.card:active{transform:translateY(0);box-shadow:var(--shadow);}
+.card .ico{
+  font-size:26px;
+  line-height:1;
+  display:block;
+  margin-bottom:9px;
+}
+.card h3{
+  margin:0 0 5px;
+  font-size:18px;
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.45;
+}
+.card p{
+  margin:0 0 13px;
+  font-size:15.5px;
+  color:var(--slate);
+  line-height:1.65;
+}
+.card .cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:9px 18px;
+  border-radius:10px;
+  background:var(--ink);
+  color:#fff;
+  font-size:16px;
+  font-weight:500;
+}
+:root[data-theme="dark"] .card .cta{color:#10202f;}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .card .cta{color:#10202f;}
+}
+
+/* 第一級：行事曆卡片（最高視覺優先權） */
+.card--top{
+  border-left:6px solid var(--ink);
+  padding:20px 18px 17px;
+  background:var(--surface);
+}
+.card--top h3{font-size:20px;}
+
+/* 成績／多元：淡綠系 */
+.card--green{border-left:6px solid var(--green);}
+.card--green .cta{background:var(--green);color:#fff;}
+
+/* 升學資訊：暖色重點 */
+.card--warm{
+  border-left:6px solid var(--warm);
+  background:var(--warm-soft);
+}
+.card--warm .cta{background:var(--warm);color:#fff;}
+.card--warm .note{
+  display:block;
+  margin:-6px 0 12px;
+  font-size:14px;
+  color:var(--slate);
+}
+
+/* 第四級：班級收支，刻意低調 */
+.card--quiet{
+  padding:14px 16px;
+  box-shadow:none;
+  background:transparent;
+  border:1px dashed var(--line);
+}
+.card--quiet .ico{font-size:21px;margin-bottom:5px;}
+.card--quiet h3{font-size:16.5px;}
+.card--quiet p{font-size:15px;margin-bottom:10px;}
+.card--quiet .cta{
+  background:transparent;
+  color:var(--ink);
+  border:1px solid var(--line);
+  padding:9px 15px;
+}
+:root[data-theme="dark"] .card--quiet .cta{color:var(--ink);}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .card--quiet .cta{color:var(--ink);}
+}
+
+/* ============================================================
+   頁尾
+   ============================================================ */
+footer{
+  margin-top:10px;
+  padding:22px 0 34px;
+  border-top:1px solid var(--line);
+  text-align:center;
+  color:var(--slate);
+  font-size:15px;
+}
+footer strong{
+  display:block;
+  color:var(--ink);
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+footer .updating{
+  display:inline-block;
+  margin-top:10px;
+  font-size:14px;
+  background:var(--green-soft);
+  color:var(--green);
+  border-radius:999px;
+  padding:4px 13px;
+}
+
+/* ============================================================
+   平板 / 桌機
+   ============================================================ */
+@media (min-width:560px){
+  .quick-grid{grid-template-columns:repeat(4,1fr);}
+  .quick-btn{flex-direction:column;gap:4px;justify-content:center;text-align:center;min-height:74px;font-size:15px;}
+  .cards{grid-template-columns:repeat(2,1fr);}   /* 平板：2 欄 */
+  .cards--single{grid-template-columns:1fr;}
+  .hero h1{font-size:30px;}
+}
+@media (min-width:900px){
+  body{font-size:17px;}
+  .hero{padding:44px 0 34px;}
+  .wrap{padding:0 24px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="class-tag">23班</span>
+    <h1>國三家長資訊入口</h1>
+    <p>孩子升學路上的重要資訊，集中在這裡。</p>
+
+    <nav class="quick" aria-label="家長常用功能">
+      <h2>家長常用功能</h2>
+      <div class="quick-grid" id="quickLinks"></div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="sections"></main>
+
+<footer>
+  <div class="wrap">
+    <strong>23班｜國三家長資訊入口</strong>
+    重要資訊集中管理，方便家長查詢
+    <div><span class="updating">本頁將依班級資訊更新</span></div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   1. 網址集中管理
+   日後若某個系統換網址，只要改這一區即可。
+   ============================================================ */
+const links = {
+  calendar:  "https://wangkaofanyuan.github.io/Exam-free/calendar.html",
+  midterm:   "https://kaohfan-ymjh.web.app/student.html",
+  mockExam:  "https://kaohfan-ymjh-ebook.web.app/student.html",
+  multi40:   "https://ymjh223-40.web.app",
+  admission: "https://wangkaofanyuan.github.io/Exam-free",
+  finance:   "https://script.google.com/macros/s/AKfycbymOACDlN2bSgTICweW9_L169EdQy9aBqQ_cyyAlPWdfaUAqk6Wq1jV3vD_F2GT5g7KrQ/exec"
+};
+
+/* ============================================================
+   2. 首屏「家長常用功能」四個快速按鈕
+   ============================================================ */
+const quickLinks = [
+  { icon:"📅", label:"行事曆",   href:links.calendar },
+  { icon:"📘", label:"段考成績", href:links.midterm  },
+  { icon:"📝", label:"模擬考",   href:links.mockExam },
+  { icon:"⭐", label:"多元40分", href:links.multi40  }
+];
+
+/* ============================================================
+   3. 頁面區塊與卡片
+   未來要新增功能（例如會考倒數、班級公告），
+   只需在下方陣列中加入一筆資料，版面會自動排好。
+   ============================================================ */
+const sections = [
+  {
+    id:"calendar",
+    title:"國三重要行事",
+    hint:"最先確認的日期資訊",
+    single:true,
+    cards:[{
+      icon:"📅",
+      title:"國三全學年重大行事曆",
+      desc:"掌握段考、模擬考、重要活動及會考相關日期。",
+      cta:"查看行事曆",
+      href:links.calendar,
+      style:"card--top"
+    }]
+  },
+  {
+    id:"scores",
+    title:"成績查詢",
+    hint:"段考與模擬考分開查詢",
+    cards:[
+      {
+        icon:"📘",
+        title:"段考成績查詢",
+        desc:"查詢班級段考相關成績資料。",
+        cta:"立即查詢",
+        href:links.midterm,
+        style:"card--green"
+      },
+      {
+        icon:"📝",
+        title:"模擬考成績查詢",
+        desc:"查詢模擬考相關成績資料。",
+        cta:"立即查詢",
+        href:links.mockExam,
+        style:"card--green"
+      }
+    ]
+  },
+  {
+    id:"multi",
+    title:"多元發展",
+    hint:"",
+    single:true,
+    cards:[{
+      icon:"⭐",
+      title:"多元 40 分查詢",
+      desc:"查詢學生多元發展相關積分。",
+      cta:"立即查詢",
+      href:links.multi40,
+      style:"card--green"
+    }]
+  },
+  {
+    id:"admission",
+    title:"國三升學資訊",
+    hint:"",
+    single:true,
+    cards:[{
+      icon:"🎯",
+      title:"116 學年度高雄區免試入學落點預測",
+      desc:"提供升學選填志願與落點相關資訊參考。",
+      note:"查詢結果僅供家長與學生選填志願時參考。",
+      cta:"查看升學資訊",
+      href:links.admission,
+      style:"card--warm"
+    }]
+  },
+  {
+    id:"finance",
+    title:"班級資訊",
+    hint:"",
+    single:true,
+    cards:[{
+      icon:"💰",
+      title:"班費點心費收支公告",
+      desc:"查看班級班費、點心費等收支公告。",
+      cta:"查看收支公告",
+      href:links.finance,
+      style:"card--quiet"
+    }]
+  }
+];
+
+/* ============================================================
+   4. 產生畫面
+   ============================================================ */
+function el(tag, attrs = {}, text) {
+  const n = document.createElement(tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+
+function externalLink(href, className, label) {
+  return el("a", {
+    href,
+    class: className,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    "aria-label": label
+  });
+}
+
+// 快速按鈕
+(function renderQuick(){
+  const box = document.getElementById("quickLinks");
+  quickLinks.forEach(item => {
+    const a = externalLink(item.href, "quick-btn", item.label + "（另開新分頁）");
+    const ico = el("span", { class:"ico", "aria-hidden":"true" }, item.icon);
+    a.appendChild(ico);
+    a.appendChild(el("span", {}, item.label));
+    box.appendChild(a);
+  });
+})();
+
+// 各區塊卡片
+(function renderSections(){
+  const main = document.getElementById("sections");
+
+  sections.forEach(sec => {
+    const section = el("section", { class:"section", id:sec.id });
+
+    const head = el("div", { class:"section-head" });
+    head.appendChild(el("h2", {}, sec.title));
+    if (sec.hint) head.appendChild(el("span", { class:"hint" }, sec.hint));
+    section.appendChild(head);
+
+    const grid = el("div", { class:"cards" + (sec.single ? " cards--single" : "") });
+
+    sec.cards.forEach(card => {
+      const a = externalLink(card.href, "card " + (card.style || ""), card.title + "（另開新分頁）");
+      a.appendChild(el("span", { class:"ico", "aria-hidden":"true" }, card.icon));
+      a.appendChild(el("h3", {}, card.title));
+      a.appendChild(el("p", {}, card.desc));
+      if (card.note) a.appendChild(el("span", { class:"note" }, card.note));
+      a.appendChild(el("span", { class:"cta" }, card.cta + " →"));
+      grid.appendChild(a);
+    });
+
+    section.appendChild(grid);
+    main.appendChild(section);
+  });
+})();
+</script>
+</body>
+</html>
