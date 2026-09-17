@@ -183,7 +183,9 @@ main{padding:26px 0 8px;}
   gap:13px;
 }
 .card{
-  display:block;
+  display:flex;
+  align-items:center;
+  gap:14px;
   position:relative;
   background:var(--surface);
   border:1px solid var(--line);
@@ -200,6 +202,7 @@ main{padding:26px 0 8px;}
   border-color:var(--ink-soft);
 }
 .card:active{transform:translateY(0);box-shadow:var(--shadow);}
+.card .card-main{flex:1 1 auto;min-width:0;}
 .card .ico{
   font-size:26px;
   line-height:1;
@@ -230,6 +233,32 @@ main{padding:26px 0 8px;}
   color:#fff;
   font-size:16px;
   font-weight:500;
+}
+
+/* 卡片右側的 QR code，方便家長直接掃描 */
+.card .card-qr{
+  flex:0 0 auto;
+  width:72px;
+  height:72px;
+  padding:5px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.card .card-qr img,
+.card .card-qr canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.card--top .card-qr{width:84px;height:84px;}
+@media (max-width:380px){
+  .card .card-qr{width:60px;height:60px;}
+  .card--top .card-qr{width:68px;height:68px;}
 }
 :root[data-theme="dark"] .card .cta{color:#10202f;}
 @media (prefers-color-scheme: dark){
@@ -263,19 +292,14 @@ main{padding:26px 0 8px;}
 
 /* 第四級：班級收支，刻意低調 */
 .card--quiet{
-  padding:14px 16px;
   box-shadow:none;
   background:transparent;
   border:1px dashed var(--line);
 }
-.card--quiet .ico{font-size:21px;margin-bottom:5px;}
-.card--quiet h3{font-size:16.5px;}
-.card--quiet p{font-size:15px;margin-bottom:10px;}
 .card--quiet .cta{
   background:transparent;
   color:var(--ink);
   border:1px solid var(--line);
-  padding:9px 15px;
 }
 :root[data-theme="dark"] .card--quiet .cta{color:var(--ink);}
 @media (prefers-color-scheme: dark){
@@ -356,6 +380,7 @@ footer .updating{
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 /* ============================================================
    1. 網址集中管理
@@ -478,6 +503,23 @@ function el(tag, attrs = {}, text) {
   return n;
 }
 
+function makeQRCode(container, url) {
+  // 使用 qrcodejs 產生 QR code；若函式庫載入失敗，靜默略過即可，不影響卡片本身的連結功能
+  try {
+    if (typeof QRCode === "undefined") return;
+    new QRCode(container, {
+      text: url,
+      width: 160,
+      height: 160,
+      colorDark: "#16304d",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch (e) {
+    console.error("QR code 產生失敗：", e);
+  }
+}
+
 function externalLink(href, className, label) {
   return el("a", {
     href,
@@ -516,11 +558,19 @@ function externalLink(href, className, label) {
 
     sec.cards.forEach(card => {
       const a = externalLink(card.href, "card " + (card.style || ""), card.title + "（另開新分頁）");
-      a.appendChild(el("span", { class:"ico", "aria-hidden":"true" }, card.icon));
-      a.appendChild(el("h3", {}, card.title));
-      a.appendChild(el("p", {}, card.desc));
-      if (card.note) a.appendChild(el("span", { class:"note" }, card.note));
-      a.appendChild(el("span", { class:"cta" }, card.cta + " →"));
+
+      const mainBox = el("div", { class:"card-main" });
+      mainBox.appendChild(el("span", { class:"ico", "aria-hidden":"true" }, card.icon));
+      mainBox.appendChild(el("h3", {}, card.title));
+      mainBox.appendChild(el("p", {}, card.desc));
+      if (card.note) mainBox.appendChild(el("span", { class:"note" }, card.note));
+      mainBox.appendChild(el("span", { class:"cta" }, card.cta + " →"));
+      a.appendChild(mainBox);
+
+      const qrBox = el("span", { class:"card-qr", "aria-hidden":"true" });
+      a.appendChild(qrBox);
+      makeQRCode(qrBox, card.href);
+
       grid.appendChild(a);
     });
 
