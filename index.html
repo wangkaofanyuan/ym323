@@ -203,6 +203,21 @@ main{padding:26px 0 8px;}
 }
 .card:active{transform:translateY(0);box-shadow:var(--shadow);}
 .card .card-main{flex:1 1 auto;min-width:0;}
+
+/* 卡片內含「主連結＋次要連結」時使用的結構 */
+.card .card-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;}
+.card .card-link{display:block;text-decoration:none;color:inherit;}
+.card .card-secondary{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  margin-top:2px;
+  font-size:14px;
+  font-weight:500;
+  color:var(--warm);
+  text-decoration:none;
+}
+.card .card-secondary:hover,.card .card-secondary:focus-visible{text-decoration:underline;}
 .card .ico{
   font-size:26px;
   line-height:1;
@@ -392,6 +407,7 @@ const links = {
   mockExam:  "https://kaohfan-ymjh-ebook.web.app/student.html",
   multi40:   "https://ymjh223-40.web.app",
   admission: "https://wangkaofanyuan.github.io/Exam-free",
+  admissionGuide: "https://wangkaofanyuan.github.io/Exam-free/使用說明與注意事項.html",
   finance:   "https://script.google.com/macros/s/AKfycbymOACDlN2bSgTICzeW9_L169EdQy9aBqQ_cyyAlPWdfaUAqk6Wq1jV3vD_F2GT5g7KrQ/exec"
 };
 
@@ -474,7 +490,8 @@ const sections = [
       note:"查詢結果僅供家長與學生選填志願時參考。",
       cta:"查看升學資訊",
       href:links.admission,
-      style:"card--warm"
+      style:"card--warm",
+      secondaryLink:{ label:"使用說明與注意事項", href:links.admissionGuide }
     }]
   },
   {
@@ -557,6 +574,34 @@ function externalLink(href, className, label) {
     const grid = el("div", { class:"cards" + (sec.single ? " cards--single" : "") });
 
     sec.cards.forEach(card => {
+      if (card.secondaryLink) {
+        // 卡片同時有主連結（例如落點預測）與次要連結（例如使用說明），
+        // 因為 <a> 不能互相巢狀，改用 <div> 當卡片外框。
+        const wrap = el("div", { class:"card " + (card.style || "") });
+
+        const body = el("div", { class:"card-body" });
+        const mainLink = externalLink(card.href, "card-link", card.title + "（另開新分頁）");
+        mainLink.appendChild(el("span", { class:"ico", "aria-hidden":"true" }, card.icon));
+        mainLink.appendChild(el("h3", {}, card.title));
+        mainLink.appendChild(el("p", {}, card.desc));
+        if (card.note) mainLink.appendChild(el("span", { class:"note" }, card.note));
+        mainLink.appendChild(el("span", { class:"cta" }, card.cta + " →"));
+        body.appendChild(mainLink);
+
+        const secLink = externalLink(card.secondaryLink.href, "card-secondary", card.secondaryLink.label + "（另開新分頁）");
+        secLink.textContent = card.secondaryLink.label + " →";
+        body.appendChild(secLink);
+
+        wrap.appendChild(body);
+
+        const qrBox = el("span", { class:"card-qr", "aria-hidden":"true" });
+        wrap.appendChild(qrBox);
+        makeQRCode(qrBox, card.href);
+
+        grid.appendChild(wrap);
+        return;
+      }
+
       const a = externalLink(card.href, "card " + (card.style || ""), card.title + "（另開新分頁）");
 
       const mainBox = el("div", { class:"card-main" });
