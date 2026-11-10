@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>【第二次模擬考——康軒版試題自主檢測】調查通知與線上回條</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    .sig-canvas {
+      touch-action: none;
+      cursor: crosshair;
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .radio-card-active-yes {
+      border-color: #2563eb !important;
+      background-color: #eff6ff !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .radio-card-active-no {
+      border-color: #475569 !important;
+      background-color: #f1f5f9 !important;
+      box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+
+  <!-- 頂部連線狀態列 -->
+  <div id="connectionBanner" class="bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs sm:text-sm text-amber-900">
+    <div class="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span id="statusDot" class="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+        <span id="statusText" class="font-medium">目前為「本機預覽模擬模式（LocalStorage）」— 填入 Firebase 設定後即可啟用雲端即時同步</span>
+      </div>
+      <button id="openFirebaseGuideBtn" type="button" class="text-xs font-semibold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-md px-2.5 py-1 transition">
+        查看 Firebase 串接教學
+      </button>
+    </div>
+  </div>
+
+  <!-- 頁首 -->
+  <header class="bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 text-white shadow-md">
+    <div class="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-indigo-100 text-xs font-medium mb-3 border border-white/15">
+        <span>班級家長線上回條系統</span>
+        <span>•</span>
+        <span>康軒版全國常模自主檢測</span>
+        <span>•</span>
+        <span class="text-amber-300 font-semibold">5 科含完整解析 50 元</span>
+      </div>
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug">
+        【第二次模擬考——康軒版試題自主檢測】調查通知
+      </h1>
+      <p class="mt-2 text-xs sm:text-sm text-indigo-100/90 flex flex-wrap items-center gap-x-4 gap-y-1">
+        <span>應填總人數：<strong class="text-white">32 位學生（01～32 號）</strong></span>
+        <span>回條截止日：<strong id="headerDeadlineText" class="text-amber-300">◯月◯日（◯）</strong></span>
+      </p>
+    </div>
+  </header>
+
+  <!-- 分頁導覽列 -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 flex items-center justify-between">
+      <div class="flex space-x-1 sm:space-x-2 py-2">
+        <button id="tabBtnForm" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          <span>填寫調查回條</span>
+        </button>
+        <button id="tabBtnStatus" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          <span>即時填報進度＆導師後台</span>
+          <span id="navProgressBadge" class="ml-1 px-2 py-0.5 text-xs rounded-full bg-indigo-100 text-indigo-700 font-bold">0/32</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要內容區 -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-8">
+
+    <!-- ==================== 分頁一：填寫調查回條 ==================== -->
+    <section id="viewForm" class="space-y-6">
+
+      <!-- 致家長說明信卡片 -->
+      <article class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-indigo-50/70 border-b border-indigo-100 px-5 py-3.5 flex items-center justify-between">
+          <div class="flex items-center gap-2 text-indigo-950 font-semibold text-base">
+            <svg class="w-5 h-5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span>致家長說明信</span>
+          </div>
+          <span class="text-xs text-slate-500">請詳閱後填寫下方回條</span>
+        </div>
+
+        <div class="p-5 sm:p-7 space-y-4 text-sm sm:text-base leading-relaxed text-slate-700">
+          <p class="font-semibold text-slate-900 text-base sm:text-lg">各位家長您好：</p>
+          <p>
+            誠如日前與您分享的二模成績分析，由於本次各校考卷版本分流，導致原先翰林版的數據樣本數較小（高雄區僅1,577人），較難精準對照孩子在全高雄區或全國的實際落點。
+          </p>
+          <p>
+            為了給孩子更客觀的診斷參考，導師已主動向康軒文教（多數高雄友校採用之版本）索取第二次模擬考的各科完整試題本。我們希望透過這套試題，讓孩子進行自主檢測，以獲取更具參考價值的全國及高雄區落點預估。
+          </p>
+          <p class="font-medium text-slate-900">
+            為確保資源有效利用，本次測驗採「自願參加」原則，相關說明如下：
+          </p>
+
+          <!-- 三大重點說明卡片 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+            <div class="rounded-xl bg-amber-50/70 border border-amber-200/80 p-4">
+              <div class="flex items-center gap-2 font-bold text-amber-900 mb-1.5 text-sm sm:text-base">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-200 text-amber-900 text-xs font-bold">1</span>
+                <span>參加前提</span>
+              </div>
+              <p class="text-xs sm:text-sm text-amber-950/90 leading-relaxed">
+                務必具備「真心想檢測、願意認真作答」的態度。<strong>請家長先與孩子充分討論，確認孩子確實會認真完成作答與訂正後再行登記</strong>。
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-blue-50/70 border border-blue-200/80 p-4">
+              <div class="flex items-center gap-2 font-bold text-blue-900 mb-1.5 text-sm sm:text-base">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-200 text-blue-900 text-xs font-bold">2</span>
+                <span>費用說明</span>
+              </div>
+              <p class="text-xs sm:text-sm text-blue-950/90 leading-relaxed">
+                因需請書商協助獨立印製全套試卷，<strong>全套 5 科試題本（含完整詳解解析）工本費共計新臺幣 50 元整</strong>（採實支實付）。
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-emerald-50/70 border border-emerald-200/80 p-4">
+              <div class="flex items-center gap-2 font-bold text-emerald-900 mb-1.5 text-sm sm:text-base">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-200 text-emerald-900 text-xs font-bold">3</span>
+                <span>測驗方式</span>
+              </div>
+              <p class="text-xs sm:text-sm text-emerald-950/90 leading-relaxed">
+                試卷發下後，由同學利用自主時間或帶回家中模擬正式考試計時作答，後續由導師協助對照康軒全國常模數據。
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-indigo-50/80 border border-indigo-200 px-4 py-3 text-xs sm:text-sm text-indigo-950 flex items-start gap-2.5">
+            <span class="text-base leading-none mt-0.5">📌</span>
+            <div>
+              <strong class="font-bold text-indigo-900">報名前請與孩子共同確認：</strong>
+              本次自主檢測包含<strong>國文、英語、數學、社會、自然共 5 科完整試題與詳解解析（每套費用 50 元）</strong>。為避免資源浪費，請務必與孩子討論並確認孩子<strong>「確實會認真計時書寫並對照解析檢討」</strong>後再登記參加。
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+            <p class="text-slate-800 font-medium">
+              請您與孩子充分討論並確認意願後，於 <span id="letterDeadlineText" class="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold">◯月◯日（◯）</span> 前填妥下方回條。感謝您的支持與配合！
+            </p>
+            <div class="text-right text-xs sm:text-sm text-slate-600 shrink-0">
+              <div class="font-semibold text-slate-800">班導師 敬上</div>
+              <div id="letterIssueDateText">◯年◯月◯日</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 線上回條表單卡片 -->
+      <section id="formCardContainer" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold">【回條】二模康軒版試題自主檢測意願調查</h2>
+            <p class="text-xs text-slate-300 mt-0.5">標示 <span class="text-rose-400 font-bold">*</span> 為必填項目</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 rounded-md bg-white/10 text-slate-200">線上簽署</span>
+        </div>
+
+        <form id="surveyForm" class="p-5 sm:p-7 space-y-6" novalidate>
+
+          <!-- 錯誤提示框 -->
+          <div id="formErrorBox" class="hidden rounded-xl bg-rose-50 border border-rose-200 p-4 text-sm text-rose-800 flex items-start gap-3">
+            <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div id="formErrorText" class="font-medium"></div>
+          </div>
+
+          <!-- 1. 學生座號與姓名 -->
+          <div>
+            <label for="studentSelect" class="block text-sm sm:text-base font-bold text-slate-800 mb-2">
+              1. 學生姓名 <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <select id="studentSelect" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm sm:text-base text-slate-800 font-medium focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
+                <option value="">— 請選擇學生座號與姓名（01～32 號） —</option>
+              </select>
+            </div>
+            <p id="studentExistingHint" class="hidden mt-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
+              💡 系統顯示此座號學生已有填報紀錄，若您再次送出將會更新先前的回條內容。
+            </p>
+          </div>
+
+          <!-- 2. 參加意願選項 -->
+          <div>
+            <span class="block text-sm sm:text-base font-bold text-slate-800 mb-1">
+              2. 參加意願選擇（請在符合的選項中打勾 ✓） <span class="text-rose-500">*</span>
+            </span>
+            <p class="text-xs text-slate-500 mb-3">請點擊下方任一選項卡片完成勾選：</p>
+
+            <div class="space-y-3">
+              <!-- 願意參加 -->
+              <label id="cardOptionYes" class="flex items-start gap-3.5 p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-blue-300 cursor-pointer transition select-none">
+                <input type="radio" name="willingness" value="yes" class="mt-1 h-5 w-5 text-blue-600 border-slate-300 focus:ring-blue-500" />
+                <div class="text-sm sm:text-base leading-relaxed">
+                  <div class="font-bold text-blue-900 flex flex-wrap items-center gap-2">
+                    <span>✓ 願意參加。</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-semibold">5 科含解析 • 費用 50 元</span>
+                  </div>
+                  <p class="text-slate-700 mt-1 text-xs sm:text-sm">
+                    已與孩子充分討論，孩子保證會<strong>認真計時應試並詳閱解析訂正</strong>，我亦同意支付全套 5 科試卷（含解析）費用 <strong>50 元</strong>。
+                  </p>
+                </div>
+              </label>
+
+              <!-- 不參加 -->
+              <label id="cardOptionNo" class="flex items-start gap-3.5 p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition select-none">
+                <input type="radio" name="willingness" value="no" class="mt-1 h-5 w-5 text-slate-600 border-slate-300 focus:ring-slate-500" />
+                <div class="text-sm sm:text-base leading-relaxed">
+                  <div class="font-bold text-slate-800 flex items-center gap-2">
+                    <span>✓ 不參加。</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">維持原複習節奏</span>
+                  </div>
+                  <p class="text-slate-600 mt-1 text-xs sm:text-sm">
+                    孩子將依照既定節奏複習，不參與本次自主檢測。
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3. 填表家長姓名與電子簽名 -->
+          <div class="space-y-4 pt-2 border-t border-slate-100">
+            <div>
+              <label for="parentNameInput" class="block text-sm sm:text-base font-bold text-slate-800 mb-1.5">
+                3. 填表家長姓名 <span class="text-rose-500">*</span>
+              </label>
+              <input id="parentNameInput" type="text" placeholder="請輸入家長姓名（例如：王大明 或 史偉力媽媽）" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm sm:text-base focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 outline-none transition" />
+            </div>
+
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                <label class="block text-sm sm:text-base font-bold text-slate-800">
+                  4. 填表家長手寫簽名 <span class="text-rose-500">*</span>
+                </label>
+                <div class="flex items-center gap-2">
+                  <button id="stampSignatureBtn" type="button" class="text-xs px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium border border-indigo-200 transition">
+                    依家長姓名產生簽名章
+                  </button>
+                  <button id="clearSignatureBtn" type="button" class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium border border-slate-300 transition">
+                    清除重簽
+                  </button>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mb-2">
+                請直接在下方虛線框內以手指或滑鼠手寫簽名（或點擊「依家長姓名產生簽名章」）：
+              </p>
+              <div class="rounded-xl border-2 border-dashed border-slate-300 bg-white overflow-hidden relative">
+                <canvas id="signatureCanvas" class="sig-canvas w-full h-40 block"></canvas>
+                <div id="sigPlaceholder" class="pointer-events-none absolute inset-0 flex items-center justify-center text-slate-400 text-sm select-none">
+                  請在此處手寫簽名
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. 備註欄（選填） -->
+          <div>
+            <label for="parentNoteInput" class="block text-sm sm:text-base font-bold text-slate-800 mb-1.5">
+              5. 家長留言或備註事項 <span class="text-xs font-normal text-slate-500">（選填）</span>
+            </label>
+            <textarea id="parentNoteInput" rows="2" placeholder="如有其他想讓導師知道的事項，可在此填寫..." class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 outline-none transition"></textarea>
+          </div>
+
+          <!-- 送出按鈕 -->
+          <div class="pt-2">
+            <button id="submitSurveyBtn" type="submit" class="w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>確認送出線上回條</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 送出成功確認卡片 -->
+      <section id="submissionSuccessCard" class="hidden bg-white rounded-2xl shadow-md border-2 border-emerald-500 p-6 sm:p-8 text-center space-y-5">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
+          <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-bold text-slate-900">感謝您的填寫，線上回條已送出！</h3>
+          <p class="text-sm text-slate-600 mt-1">系統已記錄您的意願與簽名，以下為本次填報摘要：</p>
+        </div>
+        <div id="receiptSummaryBox" class="max-w-md mx-auto bg-slate-50 rounded-xl border border-slate-200 p-4 text-left text-sm space-y-2"></div>
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button id="backToFormBtn" type="button" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition">
+            返回修改或幫其他孩子填寫
+          </button>
+          <button id="goToStatusBoardBtn" type="button" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition">
+            查看全班填報進度看板
+          </button>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- ==================== 分頁二：即時填報進度＆導師後台 ==================== -->
+    <section id="viewStatus" class="hidden space-y-6">
+
+      <!-- 公開填報進度看板（保護隱私，僅顯示是否已填寫） -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span>全班回條繳交進度看板</span>
+              <span class="text-xs font-normal px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">隱私保護：僅顯示繳交狀態</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+              家長可在此確認是否已完成線上回條送出；個別參加意願與簽名僅供導師後台查閱。
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button data-grid-filter="all" type="button" class="grid-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white">
+              全部 (32)
+            </button>
+            <button data-grid-filter="submitted" type="button" class="grid-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+              ✅ 已填報
+            </button>
+            <button data-grid-filter="pending" type="button" class="grid-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+              ⏳ 未填報
+            </button>
+          </div>
+        </div>
+
+        <!-- 進度條 -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between text-xs sm:text-sm font-semibold">
+            <span class="text-slate-700">目前完成填報進度</span>
+            <span id="publicProgressText" class="text-indigo-700">0 / 32 人 (0%)</span>
+          </div>
+          <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div id="publicProgressBar" class="h-full bg-gradient-to-r from-indigo-600 to-emerald-500 transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- 32 位學生狀態方格 -->
+        <div id="studentStatusGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5"></div>
+      </div>
+
+      <!-- 導師管理專區（密碼解鎖） -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-slate-900 text-white px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <div>
+              <h3 class="text-base font-bold">導師管理與統計後台</h3>
+              <p class="text-xs text-slate-300">查看參加意願統計、印製份數、家長手寫簽名與匯出 CSV 報表</p>
+            </div>
+          </div>
+          <button id="lockAdminBtn" type="button" class="hidden text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition">
+            鎖定後台
+          </button>
+        </div>
+
+        <!-- 未解鎖狀態 -->
+        <div id="adminLockedPanel" class="p-6 sm:p-8 max-w-md mx-auto text-center space-y-4">
+          <p class="text-sm text-slate-600">請輸入導師管理密碼以檢視詳細統計與家長簽名（預設測試密碼：<code class="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-indigo-700 font-bold">8888</code>）：</p>
+          <div class="flex items-center gap-2">
+            <input id="adminPinInput" type="password" placeholder="輸入管理密碼 (預設 8888)" class="flex-1 rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-600 outline-none" />
+            <button id="unlockAdminBtn" type="button" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition">
+              解鎖後台
+            </button>
+          </div>
+          <p id="adminPinError" class="hidden text-xs text-rose-600 font-semibold">密碼不正確，預設管理密碼為 8888</p>
+        </div>
+
+        <!-- 已解鎖導師後台內容 -->
+        <div id="adminUnlockedPanel" class="hidden p-5 sm:p-6 space-y-6">
+
+          <!-- 統計指標卡 -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div class="rounded-xl bg-slate-50 border border-slate-200 p-3.5 text-center">
+              <div class="text-xs text-slate-500 font-medium">全班應填總數</div>
+              <div class="text-2xl font-bold text-slate-900 mt-1">32</div>
+            </div>
+            <div class="rounded-xl bg-indigo-50 border border-indigo-200 p-3.5 text-center">
+              <div class="text-xs text-indigo-700 font-medium">已填寫人數</div>
+              <div id="statSubmittedCount" class="text-2xl font-bold text-indigo-900 mt-1">0</div>
+            </div>
+            <div class="rounded-xl bg-amber-50 border border-amber-200 p-3.5 text-center">
+              <div class="text-xs text-amber-800 font-medium">尚未填寫人數</div>
+              <div id="statPendingCount" class="text-2xl font-bold text-amber-900 mt-1">32</div>
+            </div>
+            <div class="rounded-xl bg-blue-50 border border-blue-300 p-3.5 text-center shadow-sm">
+              <div class="text-xs text-blue-800 font-bold">✓ 願意參加（印製份數）</div>
+              <div id="statYesCount" class="text-2xl font-extrabold text-blue-700 mt-1">0</div>
+            </div>
+            <div class="rounded-xl bg-slate-100 border border-slate-300 p-3.5 text-center col-span-2 sm:col-span-1">
+              <div class="text-xs text-slate-600 font-medium">不參加人數</div>
+              <div id="statNoCount" class="text-2xl font-bold text-slate-800 mt-1">0</div>
+            </div>
+          </div>
+
+          <!-- 5 科試卷（含解析）費用即時統計看板 -->
+          <div class="rounded-2xl bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-4 sm:p-5 shadow-sm space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-xs font-bold">費用統計專區</span>
+                <h4 class="text-sm sm:text-base font-bold">5 科試卷含解析費用試算（每份 NT$ 50 元）</h4>
+              </div>
+              <button id="copyFeeSummaryBtn" type="button" class="px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-semibold transition flex items-center gap-1.5">
+                <span>複製印製份數＆收費摘要</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="rounded-xl bg-white/10 border border-white/15 p-3.5">
+                <div class="text-xs text-emerald-200 font-medium">應收試卷總費用（書商印製費）</div>
+                <div id="statTotalFeeAmount" class="text-2xl font-extrabold text-white mt-1">NT$ 0</div>
+                <div id="statTotalFeeFormula" class="text-[11px] text-emerald-100/80 mt-0.5">0 份 × 每份 50 元</div>
+              </div>
+              <div class="rounded-xl bg-emerald-500/20 border border-emerald-400/30 p-3.5">
+                <div class="text-xs text-emerald-200 font-medium">已收齊費用（可於下方表格勾選對帳）</div>
+                <div id="statCollectedFeeAmount" class="text-2xl font-extrabold text-emerald-300 mt-1">NT$ 0</div>
+                <div id="statCollectedFeeCount" class="text-[11px] text-emerald-100/80 mt-0.5">已繳費 0 人</div>
+              </div>
+              <div class="rounded-xl bg-amber-500/20 border border-amber-400/30 p-3.5">
+                <div class="text-xs text-amber-200 font-medium">尚待收取費用</div>
+                <div id="statUnpaidFeeAmount" class="text-2xl font-extrabold text-amber-300 mt-1">NT$ 0</div>
+                <div id="statUnpaidFeeCount" class="text-[11px] text-amber-100/80 mt-0.5">待繳費 0 人</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 導師快捷工具列與日期設定 -->
+          <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <button id="copyMissingListBtn" type="button" class="px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                  <span>一鍵複製未填名單（貼至 LINE 提醒）</span>
+                </button>
+                <button id="exportCsvBtn" type="button" class="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  <span>匯出 Excel / CSV 統計表</span>
+                </button>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button id="seedDemoDataBtn" type="button" class="px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold transition">
+                  載入範例填報資料
+                </button>
+                <button id="clearAllDataBtn" type="button" class="px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition">
+                  清空所有填報紀錄
+                </button>
+              </div>
+            </div>
+
+            <!-- 調查通知日期快速設定 -->
+            <div class="pt-3 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+              <div>
+                <label for="configDeadlineInput" class="block text-xs font-semibold text-slate-600 mb-1">回條截止日期顯示文字</label>
+                <input id="configDeadlineInput" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs sm:text-sm bg-white" />
+              </div>
+              <div>
+                <label for="configIssueDateInput" class="block text-xs font-semibold text-slate-600 mb-1">通知單發文日期顯示文字</label>
+                <input id="configIssueDateInput" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs sm:text-sm bg-white" />
+              </div>
+              <div>
+                <button id="saveDatesConfigBtn" type="button" class="w-full sm:w-auto px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-semibold transition">
+                  更新通知單日期
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 明細篩選器 -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button data-admin-filter="all" type="button" class="admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">
+                全部名單 (32)
+              </button>
+              <button data-admin-filter="yes" type="button" class="admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+                ✓ 願意參加
+              </button>
+              <button data-admin-filter="no" type="button" class="admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+                不參加
+              </button>
+              <button data-admin-filter="pending" type="button" class="admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+                尚未填報
+              </button>
+              <button data-admin-filter="unpaid" type="button" class="admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+                💰 參加待繳費
+              </button>
+              <button data-admin-filter="paid" type="button" class="admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+                ✅ 已繳費
+              </button>
+            </div>
+            <input id="adminSearchInput" type="text" placeholder="搜尋座號或學生姓名..." class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs sm:text-sm outline-none focus:border-indigo-600" />
+          </div>
+
+          <!-- 全班 32 人完整明細表格 -->
+          <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                  <th class="py-3 px-3 font-bold whitespace-nowrap">座號</th>
+                  <th class="py-3 px-3 font-bold whitespace-nowrap">學生姓名</th>
+                  <th class="py-3 px-3 font-bold whitespace-nowrap">參加意願</th>
+                  <th class="py-3 px-3 font-bold whitespace-nowrap">試卷費用／對帳</th>
+                  <th class="py-3 px-3 font-bold whitespace-nowrap">填表家長</th>
+                  <th class="py-3 px-3 font-bold whitespace-nowrap">手寫簽名</th>
+                  <th class="py-3 px-3 font-bold">家長備註</th>
+                  <th class="py-3 px-3 font-bold whitespace-nowrap">填報時間</th>
+                  <th class="py-3 px-3 font-bold text-right whitespace-nowrap">操作</th>
+                </tr>
+              </thead>
+              <tbody id="adminTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- 頁尾 -->
+  <footer class="bg-white border-t border-slate-200 py-4 px-4 text-center text-xs text-slate-500 mt-8">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span>【第二次模擬考——康軒版試題自主檢測】班級線上意願調查系統</span>
+      <span>支援手機觸控簽名 ＆ Firebase 即時雲端統計</span>
+    </div>
+  </footer>
+
+  <!-- ==================== 彈出視窗與 Toast 元件（不使用 alert/confirm/prompt） ==================== -->
+
+  <!-- Toast 訊息通知 -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 hidden">
+    <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2.5 border border-slate-700">
+      <span id="toastMessage">已執行操作</span>
+    </div>
+  </div>
+
+  <!-- 確認覆蓋／刪除對話框 Modal -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+      <h3 id="confirmModalTitle" class="text-lg font-bold text-slate-900">確認操作</h3>
+      <p id="confirmModalDesc" class="text-sm text-slate-600 leading-relaxed"></p>
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button id="confirmModalCancelBtn" type="button" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50">
+          取消
+        </button>
+        <button id="confirmModalOkBtn" type="button" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">
+          確定執行
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 簽名放大檢視 Modal -->
+  <div id="signaturePreviewModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 id="sigModalTitle" class="text-base font-bold text-slate-900">家長手寫簽名檢視</h3>
+        <button id="closeSigModalBtn" type="button" class="text-slate-400 hover:text-slate-700 text-sm font-bold px-2 py-1">✕</button>
+      </div>
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-center">
+        <img id="sigModalImage" src="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=" alt="家長簽名" class="max-h-52 max-w-full object-contain" />
+      </div>
+      <div id="sigModalMeta" class="text-xs text-slate-500 text-center"></div>
+    </div>
+  </div>
+
+  <!-- Firebase 串接教學 Modal -->
+  <div id="firebaseGuideModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-lg font-bold text-slate-900">Firebase 雲端資料庫串接步驟說明</h3>
+        <button id="closeFirebaseGuideBtn" type="button" class="text-slate-500 hover:text-slate-800 font-bold px-2 py-1">✕</button>
+      </div>
+      <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <div class="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950">
+          💡 <strong>已偵測到您的 Firebase 專案為 <code>kaohfan-ymjh</code>（並已啟用匿名登入）：</strong><br/>
+          本網頁已自動支援 <code>signInAnonymously</code> 匿名驗證與預填 <code>kaohfan-ymjh</code>，您只需依下方步驟取得 <code>firebaseConfig</code> 即可完成串接！
+        </div>
+
+        <ol class="list-decimal list-inside space-y-2.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <li><strong>步驟 1（進入專案設定）：</strong>在您目前的 Firebase 畫面左上角，點擊「⚙️ <strong>設定</strong>」（位於「專案總覽」下方）&rarr; 點選「<strong>專案設定</strong>」。</li>
+          <li><strong>步驟 2（複製 firebaseConfig）：</strong>將頁面往下滑到最底部的「<strong>您的應用程式</strong>」區塊：
+            <ul class="list-disc list-inside ml-4 mt-1 text-slate-600 space-y-1">
+              <li>若已有 Web 應用程式，點選「SDK 設定和配置」下的「<strong>設定 (Config)</strong>」，複製整段 <code>firebaseConfig</code>。</li>
+              <li>若尚未建立 Web 應用程式，請點擊「<strong>&lt;/&gt;</strong>（網頁）」圖示新增一個即可看到。</li>
+            </ul>
+          </li>
+          <li><strong>步驟 3（確認 Firestore 規則）：</strong>點擊左側選單的「<strong>Firestore</strong>」&rarr; 上方「<strong>規則 (Rules)</strong>」分頁，確認允許登入者或公開讀寫（因您已開啟匿名使用者，以下規則可直接相容）：
+            <pre class="mt-1.5 p-2.5 rounded bg-slate-900 text-emerald-300 font-mono text-xs overflow-x-auto">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null || true;
+    }
+  }
+}</pre>
+          </li>
+          <li><strong>步驟 4（貼上設定）：</strong>您可以直接將複製的 <code>firebaseConfig</code> 貼在下方測試連線，或貼入本 HTML 檔案的 <code>CONFIG.firebaseConfig</code> 中永久保存！</li>
+        </ol>
+
+        <!-- 直接貼上 firebaseConfig 連線測試區 -->
+        <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2.5">
+          <label for="pasteFirebaseConfigInput" class="block font-bold text-amber-950">
+            ⚡ 快速貼上您的 firebaseConfig 立即連線：
+          </label>
+          <textarea id="pasteFirebaseConfigInput" rows="4" placeholder='可直接貼上整段 const firebaseConfig = { apiKey: "AIza...", ... }; 或只貼上您的 apiKey 字串' class="w-full rounded-lg border border-amber-300 px-3 py-2 font-mono text-xs bg-white focus:border-indigo-600 outline-none"></textarea>
+          <div class="flex items-center justify-between gap-2">
+            <span id="pasteConfigFeedback" class="text-xs text-slate-600">貼上後點擊右側按鈕即可立即連線至 kaohfan-ymjh</span>
+            <button id="applyPastedConfigBtn" type="button" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
+              套用並連線 Firebase
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="text-right pt-2">
+        <button id="closeFirebaseGuideBottomBtn" type="button" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">
+          我知道了
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 應用程式腳本 ==================== -->
+  <script>
+    /**
+     * ============================================================================
+     * 【導師設定區 CONFIG】ㄑ
+     * 可直接修改下方截止日期、發文日期、導師後台密碼與 Firebase 設定
+     * ============================================================================
+     */
+    const CONFIG = {
+      // 回條截止日期與通知單發文日期（亦可直接於導師後台動態修改）
+      deadlineDate: "11月11日（三）",
+      issueDate: "115年11月10日",
+      // 5 科試卷含解析每人費用（新臺幣元）
+      feePerStudent: 50,
+      // 導師後台解鎖密碼
+      teacherPin: "8888",
+      // Firestore 集合名稱
+      collectionName: "mock_exam_2_survey",
+      // 請從 Firebase 左上角「設定(齒輪) -> 專案設定 -> 您的應用程式」複製對應值貼入下方
+      // （已根據您的截圖預填專案 ID：kaohfan-ymjh）
+      firebaseConfig: {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "kaohfan-ymjh.firebaseapp.com",
+        projectId: "kaohfan-ymjh",
+        storageBucket: "kaohfan-ymjh.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+      }
+    };
+
+    /**
+     * 全班 32 位學生完整名單（01～32 號，含 06 洪翊程、24 陳祐蓁）
+     */
+    const CLASS_ROSTER = [
+      { seat: "01", name: "史偉力" },
+      { seat: "02", name: "吳亦翔" },
+      { seat: "03", name: "沈義庠" },
+      { seat: "04", name: "施杰漢" },
+      { seat: "05", name: "柯盛予" },
+      { seat: "06", name: "洪翊程" },
+      { seat: "07", name: "高為然" },
+      { seat: "08", name: "張予銓" },
+      { seat: "09", name: "張以墨" },
+      { seat: "10", name: "張恆" },
+      { seat: "11", name: "陳永勛" },
+      { seat: "12", name: "陳家喆" },
+      { seat: "13", name: "黃宥霖" },
+      { seat: "14", name: "黃棕宥" },
+      { seat: "15", name: "楊文耀" },
+      { seat: "16", name: "王子瑜" },
+      { seat: "17", name: "王尹希" },
+      { seat: "18", name: "王沛清" },
+      { seat: "19", name: "王宣涵" },
+      { seat: "20", name: "吳奕萱" },
+      { seat: "21", name: "李翊瑄" },
+      { seat: "22", name: "林沛瑩" },
+      { seat: "23", name: "施驊真" },
+      { seat: "24", name: "陳祐蓁" },
+      { seat: "25", name: "曾云暄" },
+      { seat: "26", name: "黃晞蓁" },
+      { seat: "27", name: "楊宛蓉" },
+      { seat: "28", name: "楊涵晨" },
+      { seat: "29", name: "蔡佳恬" },
+      { seat: "30", name: "賴天玥" },
+      { seat: "31", name: "賴宥蓁" },
+      { seat: "32", name: "謝亞澄" }
+    ];
+
+    const LOCAL_STORAGE_KEY = "kangxuan_mock2_survey_records_v1";
+    const LOCAL_DATES_KEY = "kangxuan_mock2_survey_dates_v1";
+    const LOCAL_FIREBASE_CFG_KEY = "kangxuan_mock2_firebase_cfg_v1";
+
+    // 系統狀態
+    const state = {
+      isFirebaseReady: false,
+      db: null,
+      firestoreFns: null,
+      recordsBySeat: {}, // { "01": { seat, name, willingness: 'yes'|'no', parentName, signatureDataUrl, note, updatedAt } }
+      publicGridFilter: "all",
+      adminTableFilter: "all",
+      adminSearchQuery: "",
+      isAdminUnlocked: false,
+      hasSignatureStroke: false,
+      confirmCallback: null
+    };
+
+    // Safe localStorage helpers
+    function safeGetStorage(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function safeSetStorage(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (e) {
+        // Ignore storage errors in restricted iframes
+      }
+    }
+
+    // Toast 提示
+    let toastTimer = null;
+    function showToast(msg) {
+      const container = document.getElementById("toastContainer");
+      const textEl = document.getElementById("toastMessage");
+      if (!container || !textEl) return;
+      textEl.textContent = msg;
+      container.classList.remove("hidden");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        container.classList.add("hidden");
+      }, 3200);
+    }
+
+    // 自訂確認 Modal
+    function openConfirmModal(title, desc, onConfirm) {
+      document.getElementById("confirmModalTitle").textContent = title;
+      document.getElementById("confirmModalDesc").textContent = desc;
+      state.confirmCallback = onConfirm;
+      document.getElementById("confirmModal").classList.remove("hidden");
+    }
+
+    function closeConfirmModal() {
+      document.getElementById("confirmModal").classList.add("hidden");
+      state.confirmCallback = null;
+    }
+
+    // 日期讀取與渲染
+    function loadSavedDates() {
+      const raw = safeGetStorage(LOCAL_DATES_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.deadlineDate) CONFIG.deadlineDate = parsed.deadlineDate;
+          if (parsed.issueDate) CONFIG.issueDate = parsed.issueDate;
+        } catch (e) {}
+      }
+      renderDateTexts();
+    }
+
+    function renderDateTexts() {
+      document.getElementById("headerDeadlineText").textContent = CONFIG.deadlineDate;
+      document.getElementById("letterDeadlineText").textContent = CONFIG.deadlineDate;
+      document.getElementById("letterIssueDateText").textContent = CONFIG.issueDate;
+      const deadlineInput = document.getElementById("configDeadlineInput");
+      const issueInput = document.getElementById("configIssueDateInput");
+      if (deadlineInput) deadlineInput.value = CONFIG.deadlineDate;
+      if (issueInput) issueInput.value = CONFIG.issueDate;
+    }
+
+    // 初始化或重新載入 LocalStorage 資料
+    function loadLocalRecords() {
+      const raw = safeGetStorage(LOCAL_STORAGE_KEY);
+      if (raw) {
+        try {
+          state.recordsBySeat = JSON.parse(raw) || {};
+        } catch (e) {
+          state.recordsBySeat = {};
+        }
+      } else {
+        state.recordsBySeat = {};
+      }
+      renderAllViews();
+    }
+
+    function saveLocalRecords() {
+      safeSetStorage(LOCAL_STORAGE_KEY, JSON.stringify(state.recordsBySeat));
+      renderAllViews();
+    }
+
+    // 讀取曾於網頁上貼上的 Firebase 設定
+    function loadSavedFirebaseConfig() {
+      const raw = safeGetStorage(LOCAL_FIREBASE_CFG_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.apiKey) {
+            CONFIG.firebaseConfig = { ...CONFIG.firebaseConfig, ...parsed };
+          }
+        } catch (e) {}
+      }
+    }
+
+    // 嘗試初始化 Firebase（若已設定真實 apiKey，並自動支援匿名登入 signInAnonymously）
+    async function initFirebaseIfConfigured() {
+      loadSavedFirebaseConfig();
+      const cfg = CONFIG.firebaseConfig;
+      const isConfigured = cfg && cfg.apiKey && cfg.apiKey !== "YOUR_API_KEY" && !cfg.apiKey.includes("YOUR_");
+      if (!isConfigured) {
+        loadLocalRecords();
+        return;
+      }
+
+      try {
+        const appModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+        const authModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        const firestoreModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+
+        const existingApps = appModule.getApps ? appModule.getApps() : [];
+        const app = existingApps.length > 0 ? existingApps[0] : appModule.initializeApp(cfg);
+
+        // 自動進行匿名登入（對應使用者 kaohfan-ymjh 專案中的 Authentication 匿名使用者）
+        try {
+          const auth = authModule.getAuth(app);
+          await authModule.signInAnonymously(auth);
+        } catch (authErr) {
+          console.warn("匿名登入略過或未啟用，直接嘗試連線 Firestore：", authErr);
+        }
+
+        const db = firestoreModule.getFirestore(app);
+        state.db = db;
+        state.firestoreFns = firestoreModule;
+        state.isFirebaseReady = true;
+
+        // 更新頂部橫幅狀態
+        const banner = document.getElementById("connectionBanner");
+        const dot = document.getElementById("statusDot");
+        const text = document.getElementById("statusText");
+        banner.className = "bg-emerald-50 border-b border-emerald-200 px-4 py-2 text-xs sm:text-sm text-emerald-900";
+        dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500";
+        text.textContent = "已連線至 Google Firebase Cloud Firestore（即時雲端同步已啟用）";
+
+        // 監聽集合即時更新
+        const colRef = firestoreModule.collection(db, CONFIG.collectionName);
+        firestoreModule.onSnapshot(colRef, (snapshot) => {
+          const nextMap = {};
+          snapshot.forEach((docSnap) => {
+            nextMap[docSnap.id] = docSnap.data();
+          });
+          state.recordsBySeat = nextMap;
+          renderAllViews();
+        });
+      } catch (err) {
+        console.warn("Firebase 初始化失敗，自動切換為本機儲存模式：", err);
+        state.isFirebaseReady = false;
+        loadLocalRecords();
+      }
+    }
+
+    // 儲存單筆學生回條紀錄
+    async function saveStudentRecord(record) {
+      if (state.isFirebaseReady && state.db && state.firestoreFns) {
+        const { doc, setDoc } = state.firestoreFns;
+        const docRef = doc(state.db, CONFIG.collectionName, record.seat);
+        await setDoc(docRef, record);
+      } else {
+        state.recordsBySeat[record.seat] = record;
+        saveLocalRecords();
+      }
+    }
+
+    // 刪除單筆學生回條紀錄
+    async function deleteStudentRecord(seat) {
+      if (state.isFirebaseReady && state.db && state.firestoreFns) {
+        const { doc, deleteDoc } = state.firestoreFns;
+        const docRef = doc(state.db, CONFIG.collectionName, seat);
+        await deleteDoc(docRef);
+      } else {
+        delete state.recordsBySeat[seat];
+        saveLocalRecords();
+      }
+    }
+
+    // 渲染所有畫面元件
+    function renderAllViews() {
+      renderStudentDropdown();
+      renderPublicProgressBoard();
+      renderAdminDashboard();
+    }
+
+    // 1. 渲染學生下拉選單
+    function renderStudentDropdown() {
+      const select = document.getElementById("studentSelect");
+      if (!select) return;
+      const currentVal = select.value;
+
+      let html = '<option value="">— 請選擇學生座號與姓名（01～32 號） —</option>';
+      CLASS_ROSTER.forEach((student) => {
+        const existing = state.recordsBySeat[student.seat];
+        const statusSuffix = existing ? "（✅ 已填寫）" : "";
+        html += `<option value="${student.seat}">${student.seat} 號 — ${student.name} ${statusSuffix}</option>`;
+      });
+
+      select.innerHTML = html;
+      if (currentVal) {
+        select.value = currentVal;
+      }
+      updateStudentExistingHint();
+    }
+
+    function updateStudentExistingHint() {
+      const select = document.getElementById("studentSelect");
+      const hint = document.getElementById("studentExistingHint");
+      if (!select || !hint) return;
+      const seat = select.value;
+      if (seat && state.recordsBySeat[seat]) {
+        hint.classList.remove("hidden");
+      } else {
+        hint.classList.add("hidden");
+      }
+    }
+
+    // 2. 渲染公開填報進度看板
+    function renderPublicProgressBoard() {
+      const total = CLASS_ROSTER.length;
+      const submittedCount = CLASS_ROSTER.filter((s) => Boolean(state.recordsBySeat[s.seat])).length;
+      const pct = total > 0 ? Math.round((submittedCount / total) * 100) : 0;
+
+      document.getElementById("navProgressBadge").textContent = `${submittedCount}/${total}`;
+      document.getElementById("publicProgressText").textContent = `${submittedCount} / ${total} 人 (${pct}%)`;
+      document.getElementById("publicProgressBar").style.width = `${pct}%`;
+
+      const grid = document.getElementById("studentStatusGrid");
+      if (!grid) return;
+
+      const filteredRoster = CLASS_ROSTER.filter((student) => {
+        const isDone = Boolean(state.recordsBySeat[student.seat]);
+        if (state.publicGridFilter === "submitted") return isDone;
+        if (state.publicGridFilter === "pending") return !isDone;
+        return true;
+      });
+
+      if (filteredRoster.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-8 text-center text-sm text-slate-400">沒有符合此篩選條件的學生名單</div>`;
+        return;
+      }
+
+      grid.innerHTML = filteredRoster
+        .map((student) => {
+          const rec = state.recordsBySeat[student.seat];
+          if (rec) {
+            return `
+              <div class="rounded-xl border border-emerald-300 bg-emerald-50/70 p-2.5 text-center shadow-sm">
+                <div class="text-xs font-bold text-emerald-700">${student.seat} 號</div>
+                <div class="text-sm font-bold text-slate-900 mt-0.5">${student.name}</div>
+                <div class="mt-1 inline-block px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-semibold">
+                  ✅ 已填報
+                </div>
+              </div>
+            `;
+          }
+          return `
+            <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-2.5 text-center">
+              <div class="text-xs font-semibold text-slate-400">${student.seat} 號</div>
+              <div class="text-sm font-semibold text-slate-600 mt-0.5">${student.name}</div>
+              <div class="mt-1 inline-block px-2 py-0.5 rounded-full bg-slate-200/70 text-slate-500 text-[11px] font-medium">
+                ⏳ 未填報
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    // 3. 渲染導師管理後台
+    function renderAdminDashboard() {
+      const total = CLASS_ROSTER.length;
+      const unitFee = CONFIG.feePerStudent || 50;
+      let submitted = 0;
+      let yesCount = 0;
+      let noCount = 0;
+      let paidCount = 0;
+
+      CLASS_ROSTER.forEach((s) => {
+        const rec = state.recordsBySeat[s.seat];
+        if (rec) {
+          submitted++;
+          if (rec.willingness === "yes") {
+            yesCount++;
+            if (rec.feePaid) paidCount++;
+          } else if (rec.willingness === "no") {
+            noCount++;
+          }
+        }
+      });
+
+      const pending = total - submitted;
+      const unpaidCount = Math.max(0, yesCount - paidCount);
+      const totalFee = yesCount * unitFee;
+      const collectedFee = paidCount * unitFee;
+      const unpaidFee = unpaidCount * unitFee;
+
+      document.getElementById("statSubmittedCount").textContent = String(submitted);
+      document.getElementById("statPendingCount").textContent = String(pending);
+      document.getElementById("statYesCount").textContent = String(yesCount);
+      document.getElementById("statNoCount").textContent = String(noCount);
+
+      document.getElementById("statTotalFeeAmount").textContent = `NT$ ${totalFee.toLocaleString()}`;
+      document.getElementById("statTotalFeeFormula").textContent = `${yesCount} 份 × 每份 ${unitFee} 元`;
+      document.getElementById("statCollectedFeeAmount").textContent = `NT$ ${collectedFee.toLocaleString()}`;
+      document.getElementById("statCollectedFeeCount").textContent = `已繳費 ${paidCount} 人`;
+      document.getElementById("statUnpaidFeeAmount").textContent = `NT$ ${unpaidFee.toLocaleString()}`;
+      document.getElementById("statUnpaidFeeCount").textContent = `待繳費 ${unpaidCount} 人`;
+
+      const tbody = document.getElementById("adminTableBody");
+      if (!tbody) return;
+
+      const query = state.adminSearchQuery.trim().toLowerCase();
+
+      const rows = CLASS_ROSTER.filter((student) => {
+        const rec = state.recordsBySeat[student.seat];
+        if (state.adminTableFilter === "yes" && (!rec || rec.willingness !== "yes")) return false;
+        if (state.adminTableFilter === "no" && (!rec || rec.willingness !== "no")) return false;
+        if (state.adminTableFilter === "pending" && rec) return false;
+        if (state.adminTableFilter === "unpaid" && (!rec || rec.willingness !== "yes" || rec.feePaid)) return false;
+        if (state.adminTableFilter === "paid" && (!rec || rec.willingness !== "yes" || !rec.feePaid)) return false;
+
+        if (query) {
+          const matchSeat = student.seat.toLowerCase().includes(query);
+          const matchName = student.name.toLowerCase().includes(query);
+          const matchParent = rec && rec.parentName ? rec.parentName.toLowerCase().includes(query) : false;
+          return matchSeat || matchName || matchParent;
+        }
+        return true;
+      });
+
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">沒有符合篩選條件的學生紀錄</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows
+        .map((student) => {
+          const rec = state.recordsBySeat[student.seat];
+          if (!rec) {
+            return `
+              <tr class="hover:bg-slate-50/80">
+                <td class="py-3 px-3 font-mono font-semibold text-slate-500">${student.seat}</td>
+                <td class="py-3 px-3 font-bold text-slate-800">${student.name}</td>
+                <td class="py-3 px-3"><span class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">⏳ 尚未填報</span></td>
+                <td class="py-3 px-3 text-slate-400">—</td>
+                <td class="py-3 px-3 text-slate-400">—</td>
+                <td class="py-3 px-3 text-slate-400">—</td>
+                <td class="py-3 px-3 text-slate-400">—</td>
+                <td class="py-3 px-3 text-slate-400">—</td>
+                <td class="py-3 px-3 text-right text-slate-400">—</td>
+              </tr>
+            `;
+          }
+
+          const badgeHtml =
+            rec.willingness === "yes"
+              ? `<span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-bold text-xs">✓ 願意參加</span>`
+              : `<span class="px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 font-semibold text-xs">不參加</span>`;
+
+          const feeCellHtml =
+            rec.willingness === "yes"
+              ? rec.feePaid
+                ? `<button type="button" data-toggle-fee-seat="${student.seat}" class="toggle-fee-btn inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold text-xs transition" title="點擊切換為未繳費">
+                     <span>✅ 已繳 $${unitFee}</span>
+                   </button>`
+                : `<button type="button" data-toggle-fee-seat="${student.seat}" class="toggle-fee-btn inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs border border-amber-300 transition" title="點擊標記為已繳費">
+                     <span>⏳ 待繳 $${unitFee}</span>
+                   </button>`
+              : `<span class="text-xs text-slate-400">免繳 ($0)</span>`;
+
+          const sigHtml = rec.signatureDataUrl
+            ? `<button type="button" data-preview-seat="${student.seat}" class="sig-preview-btn inline-flex items-center gap-1 px-2 py-1 rounded border border-slate-200 bg-slate-50 hover:bg-indigo-50 text-xs text-indigo-700 font-medium">
+                 <img src="${rec.signatureDataUrl}" alt="簽名" class="h-6 w-14 object-contain bg-white rounded" />
+                 <span>放大</span>
+               </button>`
+            : `<span class="text-slate-400">無</span>`;
+
+          return `
+            <tr class="hover:bg-slate-50/80">
+              <td class="py-3 px-3 font-mono font-bold text-slate-700">${student.seat}</td>
+              <td class="py-3 px-3 font-bold text-slate-900">${student.name}</td>
+              <td class="py-3 px-3">${badgeHtml}</td>
+              <td class="py-3 px-3 whitespace-nowrap">${feeCellHtml}</td>
+              <td class="py-3 px-3 font-medium text-slate-800">${escapeHtml(rec.parentName || "")}</td>
+              <td class="py-3 px-3">${sigHtml}</td>
+              <td class="py-3 px-3 text-slate-600 max-w-xs truncate" title="${escapeHtml(rec.note || "")}">${escapeHtml(rec.note || "—")}</td>
+              <td class="py-3 px-3 text-xs text-slate-500 whitespace-nowrap">${escapeHtml(rec.updatedAt || "")}</td>
+              <td class="py-3 px-3 text-right">
+                <button type="button" data-delete-seat="${student.seat}" class="delete-record-btn text-xs text-rose-600 hover:text-rose-800 font-semibold px-2 py-1 rounded hover:bg-rose-50">
+                  重置
+                </button>
+              </td>
+            </tr>
+          `;
+        })
+        .join("");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // ==================== 電子簽名板（HTML5 Canvas） ====================
+    let sigCanvas = null;
+    let sigCtx = null;
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function initSignaturePad() {
+      sigCanvas = document.getElementById("signatureCanvas");
+      if (!sigCanvas) return;
+      sigCtx = sigCanvas.getContext("2d");
+      resizeSignatureCanvas();
+      window.addEventListener("resize", resizeSignatureCanvas);
+
+      // 滑鼠事件
+      sigCanvas.addEventListener("mousedown", (e) => {
+        const pos = getCanvasPos(e);
+        startDrawing(pos.x, pos.y);
+      });
+      sigCanvas.addEventListener("mousemove", (e) => {
+        if (!isDrawing) return;
+        const pos = getCanvasPos(e);
+        drawStroke(pos.x, pos.y);
+      });
+      window.addEventListener("mouseup", stopDrawing);
+
+      // 觸控事件
+      sigCanvas.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.touches.length > 0) {
+            e.preventDefault();
+            const pos = getCanvasPos(e.touches[0]);
+            startDrawing(pos.x, pos.y);
+          }
+        },
+        { passive: false }
+      );
+      sigCanvas.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!isDrawing || e.touches.length === 0) return;
+          e.preventDefault();
+          const pos = getCanvasPos(e.touches[0]);
+          drawStroke(pos.x, pos.y);
+        },
+        { passive: false }
+      );
+      sigCanvas.addEventListener("touchend", stopDrawing);
+    }
+
+    function resizeSignatureCanvas() {
+      if (!sigCanvas || !sigCtx) return;
+      const rect = sigCanvas.getBoundingClientRect();
+      if (rect.width === 0) return;
+      const prevData = state.hasSignatureStroke ? sigCanvas.toDataURL("image/png") : null;
+      const dpr = window.devicePixelRatio || 1;
+      sigCanvas.width = rect.width * dpr;
+      sigCanvas.height = rect.height * dpr;
+      sigCtx.setTransform(1, 0, 0, 1, 0, 0);
+      sigCtx.scale(dpr, dpr);
+      sigCtx.lineWidth = 2.6;
+      sigCtx.lineCap = "round";
+      sigCtx.lineJoin = "round";
+      sigCtx.strokeStyle = "#0f172a";
+
+      if (prevData) {
+        const img = new Image();
+        img.onload = () => {
+          sigCtx.drawImage(img, 0, 0, rect.width, rect.height);
+        };
+        img.src = prevData;
+      }
+    }
+
+    function getCanvasPos(evt) {
+      const rect = sigCanvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
+
+    function startDrawing(x, y) {
+      isDrawing = true;
+      lastX = x;
+      lastY = y;
+      state.hasSignatureStroke = true;
+      const placeholder = document.getElementById("sigPlaceholder");
+      if (placeholder) placeholder.classList.add("hidden");
+    }
+
+    function drawStroke(x, y) {
+      if (!sigCtx) return;
+      sigCtx.beginPath();
+      sigCtx.moveTo(lastX, lastY);
+      sigCtx.lineTo(x, y);
+      sigCtx.stroke();
+      lastX = x;
+      lastY = y;
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function clearSignaturePad() {
+      if (!sigCanvas || !sigCtx) return;
+      const rect = sigCanvas.getBoundingClientRect();
+      sigCtx.clearRect(0, 0, rect.width, rect.height);
+      state.hasSignatureStroke = false;
+      const placeholder = document.getElementById("sigPlaceholder");
+      if (placeholder) placeholder.classList.remove("hidden");
+    }
+
+    // 依家長姓名自動在簽名板繪製簽名章（方便不便手寫的家長）
+    function stampSignatureFromName() {
+      const parentNameInput = document.getElementById("parentNameInput");
+      const nameVal = parentNameInput ? parentNameInput.value.trim() : "";
+      if (!nameVal) {
+        showToast("請先在上方輸入「填表家長姓名」再產生簽名章");
+        if (parentNameInput) parentNameInput.focus();
+        return;
+      }
+      clearSignaturePad();
+      const rect = sigCanvas.getBoundingClientRect();
+      sigCtx.save();
+      sigCtx.font = "bold 34px 'Noto Sans TC', serif";
+      sigCtx.fillStyle = "#1e3a8a";
+      sigCtx.textAlign = "center";
+      sigCtx.textBaseline = "middle";
+      sigCtx.fillText(nameVal, rect.width / 2, rect.height / 2);
+      sigCtx.restore();
+      state.hasSignatureStroke = true;
+      const placeholder = document.getElementById("sigPlaceholder");
+      if (placeholder) placeholder.classList.add("hidden");
+      showToast("已產生家長電子簽名章");
+    }
+
+    // ==================== 分頁切換與表單提交邏輯 ====================
+    function switchTab(tabName) {
+      const viewForm = document.getElementById("viewForm");
+      const viewStatus = document.getElementById("viewStatus");
+      const btnForm = document.getElementById("tabBtnForm");
+      const btnStatus = document.getElementById("tabBtnStatus");
+
+      if (tabName === "form") {
+        viewForm.classList.remove("hidden");
+        viewStatus.classList.add("hidden");
+        btnForm.className = "px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm";
+        btnStatus.className = "px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:bg-slate-100";
+        setTimeout(resizeSignatureCanvas, 50);
+      } else {
+        viewForm.classList.add("hidden");
+        viewStatus.classList.remove("hidden");
+        btnForm.className = "px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:bg-slate-100";
+        btnStatus.className = "px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm";
+        renderAllViews();
+      }
+    }
+
+    function showFormError(msg) {
+      const box = document.getElementById("formErrorBox");
+      const text = document.getElementById("formErrorText");
+      text.textContent = msg;
+      box.classList.remove("hidden");
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function hideFormError() {
+      document.getElementById("formErrorBox").classList.add("hidden");
+    }
+
+    function formatNowTimestamp() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      return `${y}-${m}-${d} ${hh}:${mm}`;
+    }
+
+    async function executeSubmitRecord(record) {
+      await saveStudentRecord(record);
+      hideFormError();
+
+      const unitFee = CONFIG.feePerStudent || 50;
+      const willingnessLabel =
+        record.willingness === "yes"
+          ? `✓ 願意參加（保證認真寫完並訂正，同意支付 5 科含解析費用 ${unitFee} 元）`
+          : "✓ 不參加（依照既定節奏複習）";
+      const feeText =
+        record.willingness === "yes"
+          ? `NT$ ${unitFee} 元（全套 5 科試卷含完整解析）`
+          : "NT$ 0 元（不參加）";
+
+      const summaryBox = document.getElementById("receiptSummaryBox");
+      summaryBox.innerHTML = `
+        <div><span class="text-slate-500">學生座號姓名：</span><strong class="text-slate-900">${record.seat} 號 ${record.name}</strong></div>
+        <div><span class="text-slate-500">調查意願結果：</span><strong class="${record.willingness === "yes" ? "text-blue-700" : "text-slate-800"}">${willingnessLabel}</strong></div>
+        <div><span class="text-slate-500">應繳試卷費用：</span><strong class="text-emerald-700">${feeText}</strong></div>
+        <div><span class="text-slate-500">填表家長姓名：</span><strong class="text-slate-900">${escapeHtml(record.parentName)}</strong></div>
+        <div><span class="text-slate-500">完成填報時間：</span><span class="text-slate-700">${record.updatedAt}</span></div>
+      `;
+
+      document.getElementById("formCardContainer").classList.add("hidden");
+      document.getElementById("submissionSuccessCard").classList.remove("hidden");
+      showToast(`已成功送出 ${record.seat} 號 ${record.name} 的家長回條！`);
+    }
+
+    // 複製未填寫名單
+    function copyMissingStudentsList() {
+      const missing = CLASS_ROSTER.filter((s) => !state.recordsBySeat[s.seat]);
+      if (missing.length === 0) {
+        showToast("🎉 全班 32 位同學皆已完成填報！");
+        return;
+      }
+      const listStr = missing.map((s) => `${s.seat}${s.name}`).join("、");
+      const message = `【第二次模擬考——康軒版試題自主檢測】溫馨提醒：\n目前尚有 ${missing.length} 位同學尚未完成線上意願回條（${listStr}），煩請家長於 ${CONFIG.deadlineDate} 前協助填寫，謝謝您的支持與配合！`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(message).then(
+          () => showToast(`已複製 ${missing.length} 位未填寫名單，可直接貼至 LINE 群組！`),
+          () => fallbackCopyText(message)
+        );
+      } else {
+        fallbackCopyText(message);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        showToast("已複製未填寫名單至剪貼簿！");
+      } catch (e) {
+        showToast("複製失敗，請手動選取複製");
+      }
+      document.body.removeChild(ta);
+    }
+
+    // 複製印製份數與費用統計摘要
+    function copyFeeSummaryReport() {
+      const unitFee = CONFIG.feePerStudent || 50;
+      const yesStudents = CLASS_ROSTER.filter((s) => state.recordsBySeat[s.seat] && state.recordsBySeat[s.seat].willingness === "yes");
+      const paidStudents = yesStudents.filter((s) => state.recordsBySeat[s.seat].feePaid);
+      const unpaidStudents = yesStudents.filter((s) => !state.recordsBySeat[s.seat].feePaid);
+      const totalFee = yesStudents.length * unitFee;
+      const collectedFee = paidStudents.length * unitFee;
+      const unpaidFee = unpaidStudents.length * unitFee;
+
+      const yesNames = yesStudents.length > 0 ? yesStudents.map((s) => `${s.seat}${s.name}`).join("、") : "尚無";
+      const unpaidNames = unpaidStudents.length > 0 ? unpaidStudents.map((s) => `${s.seat}${s.name}`).join("、") : "無（已全數收齊）";
+
+      const reportText = [
+        `【二模康軒版自主檢測（5科含解析）印製與費用統計】`,
+        `• 預訂印製份數：${yesStudents.length} 份（每份 ${unitFee} 元）`,
+        `• 應收試卷總額：NT$ ${totalFee} 元`,
+        `• 已收齊金額：NT$ ${collectedFee} 元（${paidStudents.length} 人）`,
+        `• 待收取金額：NT$ ${unpaidFee} 元（${unpaidStudents.length} 人）`,
+        `• 參加學生名單：${yesNames}`,
+        `• 尚未繳費名單：${unpaidNames}`
+      ].join("\n");
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(reportText).then(
+          () => showToast("已複製印製份數與收費統計摘要！"),
+          () => fallbackCopyText(reportText)
+        );
+      } else {
+        fallbackCopyText(reportText);
+      }
+    }
+
+    // 匯出 CSV (含 UTF-8 BOM 支援 Excel 直接開啟不亂碼)
+    function exportSurveyToCsv() {
+      const unitFee = CONFIG.feePerStudent || 50;
+      const headers = ["座號", "學生姓名", "填報狀態", "參加意願", "應繳費用(元)", "繳費狀態", "填表家長姓名", "家長備註", "填報時間"];
+      const csvRows = [headers.join(",")];
+
+      let yesCount = 0;
+      let paidCount = 0;
+
+      CLASS_ROSTER.forEach((student) => {
+        const rec = state.recordsBySeat[student.seat];
+        const status = rec ? "已填報" : "尚未填報";
+        const isYes = rec && rec.willingness === "yes";
+        if (isYes) {
+          yesCount++;
+          if (rec.feePaid) paidCount++;
+        }
+        const willingness = rec
+          ? isYes
+            ? "願意參加"
+            : "不參加"
+          : "未填";
+        const feeAmount = isYes ? String(unitFee) : "0";
+        const feeStatus = isYes ? (rec.feePaid ? "已繳費" : "待繳費") : "免繳";
+        const parentName = rec ? rec.parentName || "" : "";
+        const note = rec ? rec.note || "" : "";
+        const updatedAt = rec ? rec.updatedAt || "" : "";
+
+        const row = [
+          student.seat,
+          student.name,
+          status,
+          willingness,
+          feeAmount,
+          feeStatus,
+          parentName,
+          note,
+          updatedAt
+        ].map((val) => `"${String(val).replace(/"/g, '""')}"`);
+
+        csvRows.push(row.join(","));
+      });
+
+      const totalFee = yesCount * unitFee;
+      const collectedFee = paidCount * unitFee;
+      const unpaidFee = (yesCount - paidCount) * unitFee;
+      csvRows.push("");
+      csvRows.push(`"【統計合計】","參加人數：${yesCount} 人","單價：${unitFee} 元","應收總計：${totalFee} 元","已收金額：${collectedFee} 元","待收金額：${unpaidFee} 元","","",""`);
+
+      const csvString = "\uFEFF" + csvRows.join("\r\n");
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `二模康軒版自主檢測意願統計_${formatNowTimestamp().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast("已匯出 CSV 報表（可直接以 Excel 開啟）");
+    }
+
+    // 產生測試範例資料
+    function createDemoSignatureDataUrl(text) {
+      const c = document.createElement("canvas");
+      c.width = 240;
+      c.height = 80;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.font = "bold 28px 'Noto Sans TC', serif";
+      ctx.fillStyle = "#1e3a8a";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, c.width / 2, c.height / 2);
+      return c.toDataURL("image/png");
+    }
+
+    async function seedSampleRecords() {
+      const sampleSeats = [
+        { seat: "01", willingness: "yes", feePaid: true, note: "謝謝老師用心安排！50元已讓孩子帶去學校" },
+        { seat: "02", willingness: "yes", feePaid: true, note: "" },
+        { seat: "05", willingness: "yes", feePaid: false, note: "會在週末計時完成" },
+        { seat: "06", willingness: "no", feePaid: false, note: "孩子想先複習錯題本" },
+        { seat: "11", willingness: "yes", feePaid: true, note: "" },
+        { seat: "16", willingness: "yes", feePaid: false, note: "感謝導師協助對照常模" },
+        { seat: "21", willingness: "yes", feePaid: true, note: "" },
+        { seat: "24", willingness: "yes", feePaid: true, note: "" },
+        { seat: "27", willingness: "no", feePaid: false, note: "" },
+        { seat: "32", willingness: "yes", feePaid: false, note: "" }
+      ];
+
+      for (const item of sampleSeats) {
+        const student = CLASS_ROSTER.find((s) => s.seat === item.seat);
+        if (!student) continue;
+        const parentLabel = `${student.name}家長`;
+        const rec = {
+          seat: student.seat,
+          name: student.name,
+          willingness: item.willingness,
+          feePaid: Boolean(item.feePaid),
+          parentName: parentLabel,
+          signatureDataUrl: createDemoSignatureDataUrl(parentLabel),
+          note: item.note,
+          updatedAt: formatNowTimestamp()
+        };
+        await saveStudentRecord(rec);
+      }
+      showToast("已載入 10 筆範例家長填報資料");
+    }
+
+    // ==================== 綁定所有事件監聽器 ====================
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedDates();
+      initSignaturePad();
+      initFirebaseIfConfigured();
+
+      // 分頁切換
+      document.getElementById("tabBtnForm").addEventListener("click", () => switchTab("form"));
+      document.getElementById("tabBtnStatus").addEventListener("click", () => switchTab("status"));
+
+      // Firebase 教學 Modal
+      document.getElementById("openFirebaseGuideBtn").addEventListener("click", () => {
+        document.getElementById("firebaseGuideModal").classList.remove("hidden");
+      });
+      document.getElementById("closeFirebaseGuideBtn").addEventListener("click", () => {
+        document.getElementById("firebaseGuideModal").classList.add("hidden");
+      });
+      document.getElementById("closeFirebaseGuideBottomBtn").addEventListener("click", () => {
+        document.getElementById("firebaseGuideModal").classList.add("hidden");
+      });
+
+      document.getElementById("applyPastedConfigBtn").addEventListener("click", async () => {
+        const rawInput = document.getElementById("pasteFirebaseConfigInput").value.trim();
+        const feedback = document.getElementById("pasteConfigFeedback");
+        if (!rawInput) {
+          feedback.textContent = "請先貼上 firebaseConfig 內容或 apiKey！";
+          feedback.className = "text-xs text-rose-600 font-semibold";
+          return;
+        }
+
+        const extractField = (key) => {
+          const pattern = key + '\\s*:\\s*["\x27]([^"\x27]+)["\x27]';
+          const reg = new RegExp(pattern);
+          const m = rawInput.match(reg);
+          return m ? m[1] : null;
+        };
+
+        const extractedApiKey = extractField("apiKey") || (rawInput.startsWith("AIza") ? rawInput : null);
+        if (!extractedApiKey) {
+          feedback.textContent = "找不到有效的 apiKey（通常以 AIza 開頭），請確認複製的內容是否完整。";
+          feedback.className = "text-xs text-rose-600 font-semibold";
+          return;
+        }
+
+        const newCfg = {
+          apiKey: extractedApiKey,
+          authDomain: extractField("authDomain") || "kaohfan-ymjh.firebaseapp.com",
+          projectId: extractField("projectId") || "kaohfan-ymjh",
+          storageBucket: extractField("storageBucket") || "kaohfan-ymjh.appspot.com",
+          messagingSenderId: extractField("messagingSenderId") || CONFIG.firebaseConfig.messagingSenderId,
+          appId: extractField("appId") || CONFIG.firebaseConfig.appId
+        };
+
+        CONFIG.firebaseConfig = newCfg;
+        safeSetStorage(LOCAL_FIREBASE_CFG_KEY, JSON.stringify(newCfg));
+        feedback.textContent = "正在連線至 Firebase (" + newCfg.projectId + ")...";
+        feedback.className = "text-xs text-indigo-700 font-semibold";
+
+        await initFirebaseIfConfigured();
+        if (state.isFirebaseReady) {
+          feedback.textContent = "✅ 已成功連線至 Firebase (" + newCfg.projectId + ")！";
+          feedback.className = "text-xs text-emerald-700 font-bold";
+          showToast("已成功連線至 Firebase 雲端資料庫！");
+        }
+      });
+
+      // 學生選單變更
+      document.getElementById("studentSelect").addEventListener("change", updateStudentExistingHint);
+
+      // Radio 卡片高亮切換
+      const radios = document.querySelectorAll('input[name="willingness"]');
+      radios.forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const cardYes = document.getElementById("cardOptionYes");
+          const cardNo = document.getElementById("cardOptionNo");
+          cardYes.classList.remove("radio-card-active-yes");
+          cardNo.classList.remove("radio-card-active-no");
+          if (radio.value === "yes" && radio.checked) {
+            cardYes.classList.add("radio-card-active-yes");
+          } else if (radio.value === "no" && radio.checked) {
+            cardNo.classList.add("radio-card-active-no");
+          }
+        });
+      });
+
+      // 簽名板按鈕
+      document.getElementById("clearSignatureBtn").addEventListener("click", clearSignaturePad);
+      document.getElementById("stampSignatureBtn").addEventListener("click", stampSignatureFromName);
+
+      // 表單送出
+      document.getElementById("surveyForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        hideFormError();
+
+        const seat = document.getElementById("studentSelect").value;
+        if (!seat) {
+          showFormError("請選擇「學生座號與姓名」！");
+          return;
+        }
+
+        const checkedRadio = document.querySelector('input[name="willingness"]:checked');
+        if (!checkedRadio) {
+          showFormError("請勾選「願意參加」或「不參加」！");
+          return;
+        }
+
+        const parentName = document.getElementById("parentNameInput").value.trim();
+        if (!parentName) {
+          showFormError("請輸入「填表家長姓名」！");
+          return;
+        }
+
+        if (!state.hasSignatureStroke) {
+          showFormError("請在簽名框內手寫簽名，或點擊「依家長姓名產生簽名章」！");
+          return;
+        }
+
+        const studentObj = CLASS_ROSTER.find((s) => s.seat === seat);
+        const note = document.getElementById("parentNoteInput").value.trim();
+        const signatureDataUrl = sigCanvas.toDataURL("image/png");
+
+        const prevRec = state.recordsBySeat[seat];
+        const record = {
+          seat,
+          name: studentObj ? studentObj.name : "",
+          willingness: checkedRadio.value,
+          feePaid: checkedRadio.value === "yes" && prevRec ? Boolean(prevRec.feePaid) : false,
+          parentName,
+          signatureDataUrl,
+          note,
+          updatedAt: formatNowTimestamp()
+        };
+
+        if (state.recordsBySeat[seat]) {
+          openConfirmModal(
+            "確認覆蓋既有回條紀錄",
+            `${record.seat} 號 ${record.name} 先前已有填報紀錄，請問是否要用本次填寫的內容更新覆蓋？`,
+            async () => {
+              closeConfirmModal();
+              await executeSubmitRecord(record);
+            }
+          );
+        } else {
+          await executeSubmitRecord(record);
+        }
+      });
+
+      // 成功畫面按鈕
+      document.getElementById("backToFormBtn").addEventListener("click", () => {
+        document.getElementById("surveyForm").reset();
+        document.getElementById("cardOptionYes").classList.remove("radio-card-active-yes");
+        document.getElementById("cardOptionNo").classList.remove("radio-card-active-no");
+        clearSignaturePad();
+        updateStudentExistingHint();
+        document.getElementById("submissionSuccessCard").classList.add("hidden");
+        document.getElementById("formCardContainer").classList.remove("hidden");
+      });
+
+      document.getElementById("goToStatusBoardBtn").addEventListener("click", () => {
+        switchTab("status");
+      });
+
+      // 公開看板篩選按鈕
+      document.querySelectorAll(".grid-filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.publicGridFilter = btn.getAttribute("data-grid-filter") || "all";
+          document.querySelectorAll(".grid-filter-btn").forEach((b) => {
+            b.className = "grid-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
+          });
+          btn.className = "grid-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white";
+          renderPublicProgressBoard();
+        });
+      });
+
+      // 導師後台解鎖與鎖定
+      function handleUnlockAdmin() {
+        const pinVal = document.getElementById("adminPinInput").value.trim();
+        const errEl = document.getElementById("adminPinError");
+        if (pinVal === CONFIG.teacherPin) {
+          state.isAdminUnlocked = true;
+          errEl.classList.add("hidden");
+          document.getElementById("adminLockedPanel").classList.add("hidden");
+          document.getElementById("adminUnlockedPanel").classList.remove("hidden");
+          document.getElementById("lockAdminBtn").classList.remove("hidden");
+          renderAdminDashboard();
+          showToast("已解鎖導師管理後台");
+        } else {
+          errEl.classList.remove("hidden");
+        }
+      }
+
+      document.getElementById("unlockAdminBtn").addEventListener("click", handleUnlockAdmin);
+      document.getElementById("adminPinInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleUnlockAdmin();
+        }
+      });
+
+      document.getElementById("lockAdminBtn").addEventListener("click", () => {
+        state.isAdminUnlocked = false;
+        document.getElementById("adminPinInput").value = "";
+        document.getElementById("adminUnlockedPanel").classList.add("hidden");
+        document.getElementById("adminLockedPanel").classList.remove("hidden");
+        document.getElementById("lockAdminBtn").classList.add("hidden");
+        showToast("已鎖定導師後台");
+      });
+
+      // 導師後台工具按鈕
+      document.getElementById("copyMissingListBtn").addEventListener("click", copyMissingStudentsList);
+      document.getElementById("copyFeeSummaryBtn").addEventListener("click", copyFeeSummaryReport);
+      document.getElementById("exportCsvBtn").addEventListener("click", exportSurveyToCsv);
+
+      document.getElementById("saveDatesConfigBtn").addEventListener("click", () => {
+        const dVal = document.getElementById("configDeadlineInput").value.trim();
+        const iVal = document.getElementById("configIssueDateInput").value.trim();
+        if (dVal) CONFIG.deadlineDate = dVal;
+        if (iVal) CONFIG.issueDate = iVal;
+        safeSetStorage(
+          LOCAL_DATES_KEY,
+          JSON.stringify({ deadlineDate: CONFIG.deadlineDate, issueDate: CONFIG.issueDate })
+        );
+        renderDateTexts();
+        showToast("已更新調查通知單上的截止日期與發文日期！");
+      });
+
+      document.getElementById("seedDemoDataBtn").addEventListener("click", () => {
+        seedSampleRecords();
+      });
+
+      document.getElementById("clearAllDataBtn").addEventListener("click", () => {
+        openConfirmModal(
+          "確認清空所有填報紀錄",
+          "確定要清空目前所有的家長填報紀錄嗎？此操作無法復原。",
+          async () => {
+            closeConfirmModal();
+            if (state.isFirebaseReady && state.db && state.firestoreFns) {
+              const seats = Object.keys(state.recordsBySeat);
+              for (const s of seats) {
+                await deleteStudentRecord(s);
+              }
+            } else {
+              state.recordsBySeat = {};
+              saveLocalRecords();
+            }
+            showToast("已清空所有填報紀錄");
+          }
+        );
+      });
+
+      // 導師表格篩選與搜尋
+      document.querySelectorAll(".admin-filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.adminTableFilter = btn.getAttribute("data-admin-filter") || "all";
+          document.querySelectorAll(".admin-filter-btn").forEach((b) => {
+            b.className = "admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
+          });
+          btn.className = "admin-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white";
+          renderAdminDashboard();
+        });
+      });
+
+      document.getElementById("adminSearchInput").addEventListener("input", (e) => {
+        state.adminSearchQuery = e.target.value || "";
+        renderAdminDashboard();
+      });
+
+      // 導師表格內按鈕事件委派（切換繳費狀態、放大簽名、單筆刪除）
+      document.getElementById("adminTableBody").addEventListener("click", async (e) => {
+        const feeBtn = e.target.closest(".toggle-fee-btn");
+        if (feeBtn) {
+          const seat = feeBtn.getAttribute("data-toggle-fee-seat");
+          const rec = state.recordsBySeat[seat];
+          if (rec && rec.willingness === "yes") {
+            const updated = { ...rec, feePaid: !rec.feePaid };
+            await saveStudentRecord(updated);
+            showToast(
+              updated.feePaid
+                ? `已標記 ${rec.seat} 號 ${rec.name} 為「已繳費 $50」`
+                : `已將 ${rec.seat} 號 ${rec.name} 改為「待繳費 $50」`
+            );
+          }
+          return;
+        }
+
+        const previewBtn = e.target.closest(".sig-preview-btn");
+        if (previewBtn) {
+          const seat = previewBtn.getAttribute("data-preview-seat");
+          const rec = state.recordsBySeat[seat];
+          if (rec && rec.signatureDataUrl) {
+            document.getElementById("sigModalTitle").textContent = `${rec.seat} 號 ${rec.name} — 家長簽名 (${rec.parentName})`;
+            document.getElementById("sigModalImage").src = rec.signatureDataUrl;
+            document.getElementById("sigModalMeta").textContent = `填報時間：${rec.updatedAt || ""}`;
+            document.getElementById("signaturePreviewModal").classList.remove("hidden");
+          }
+          return;
+        }
+
+        const delBtn = e.target.closest(".delete-record-btn");
+        if (delBtn) {
+          const seat = delBtn.getAttribute("data-delete-seat");
+          const rec = state.recordsBySeat[seat];
+          if (!rec) return;
+          openConfirmModal(
+            "重置單筆學生回條",
+            `確定要刪除「${rec.seat} 號 ${rec.name}」的回條紀錄，讓家長重新填寫嗎？`,
+            async () => {
+              closeConfirmModal();
+              await deleteStudentRecord(seat);
+              showToast(`已重置 ${rec.seat} 號 ${rec.name} 的填報紀錄`);
+            }
+          );
+        }
+      });
+
+      // 關閉簽名預覽與確認視窗
+      document.getElementById("closeSigModalBtn").addEventListener("click", () => {
+        document.getElementById("signaturePreviewModal").classList.add("hidden");
+      });
+      document.getElementById("confirmModalCancelBtn").addEventListener("click", closeConfirmModal);
+      document.getElementById("confirmModalOkBtn").addEventListener("click", () => {
+        if (typeof state.confirmCallback === "function") {
+          state.confirmCallback();
+        } else {
+          closeConfirmModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
