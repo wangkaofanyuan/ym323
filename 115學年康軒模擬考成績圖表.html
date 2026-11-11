@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>115學年康軒模擬考成績圖表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#f6f7f4; --panel:#ffffff; --panel2:#eef2ee; --ink:#1c2a26; --muted:#5d6f68;
+  --line:#dde3dc; --teal:#0e6b5c; --teal-soft:#e3efe9; --amber:#b97e1e; --terra:#c4502f;
+  --region:#0e6b5c; --nation:#a8b0a6; --seg-noc:#0e6b5c; --seg-c1:#8fb8a9; --seg-c2:#dfa83e; --seg-c3:#c4502f;
+  --grid:#dde3dc; --chip:#eef2ee; --seg-lab-light:#ffffff; --seg-lab-dark:#22302a;
+  --shadow:0 1px 2px rgba(20,40,34,.05),0 8px 24px rgba(20,40,34,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1512; --panel:#17211c; --panel2:#1d2a23; --ink:#e9efeb; --muted:#9db0a6;
+    --line:#2a3a32; --teal:#3ec6a7; --teal-soft:#1d2f28; --amber:#e0aa4e; --terra:#e07a56;
+    --region:#2fa98f; --nation:#77837c; --seg-noc:#2fa98f; --seg-c1:#5d8a7c; --seg-c2:#d9a441; --seg-c3:#d96a4a;
+    --grid:#2a3a32; --chip:#1d2a23; --seg-lab-dark:#14201a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px;line-height:1.65;font-variant-numeric:tabular-nums;}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 56px;}
+h1,h2,.serif{font-family:"Noto Serif TC","Songti TC",serif;}
+header.top{border-bottom:3px double var(--line);padding-bottom:20px;margin-bottom:22px;}
+.doc-tag{display:inline-block;font-size:.82rem;letter-spacing:.08em;color:var(--teal);
+  border:1px solid var(--teal);border-radius:999px;padding:2px 12px;margin-bottom:12px;font-weight:600;}
+h1{font-size:clamp(1.55rem,4.5vw,2.3rem);line-height:1.3;margin:0 0 6px;font-weight:700;}
+.subtitle{font-size:clamp(1.02rem,2.6vw,1.25rem);color:var(--muted);margin:0 0 14px;font-weight:500;}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;padding:0;list-style:none;}
+.meta li{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:.88rem;}
+.meta b{color:var(--teal);font-weight:700;margin-right:4px;}
+.explain{background:var(--teal-soft);border-radius:10px;padding:12px 16px;font-size:.93rem;margin:0;}
+.explain b{color:var(--teal);}
+section{margin-top:38px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:16px;}
+.sec-no{font-family:"Noto Serif TC",serif;font-size:1.5rem;color:var(--teal);font-weight:700;}
+h2{font-size:1.32rem;margin:0;font-weight:700;}
+.sec-note{color:var(--muted);font-size:.92rem;margin:0 0 14px;}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 16px 13px;box-shadow:var(--shadow);}
+.kpi .lab{font-size:.85rem;color:var(--muted);margin-bottom:2px;}
+.kpi .big{font-family:"Noto Serif TC",serif;font-size:1.85rem;font-weight:700;line-height:1.15;color:var(--ink);}
+.kpi .big small{font-size:1rem;color:var(--muted);font-weight:500;}
+.kpi .cmp{font-size:.83rem;color:var(--muted);margin-top:4px;}
+.kpi .cmp b{color:var(--teal);}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);}
+.legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:10px;font-size:.9rem;}
+.legend .sw{display:inline-block;width:22px;height:11px;border-radius:3px;margin-right:7px;vertical-align:middle;}
+.sw-region{background:var(--region)} .sw-nation{background:var(--nation)}
+.sw-noc{background:var(--seg-noc)} .sw-c1{background:var(--seg-c1)} .sw-c2{background:var(--seg-c2)} .sw-c3{background:var(--seg-c3)}
+svg.chart{width:100%;height:auto;display:block;}
+.grid{stroke:var(--grid);stroke-width:1;}
+.sep{stroke:var(--line);stroke-width:1;stroke-dasharray:4 4;}
+.axis-lab{fill:var(--muted);font-size:12.5px;font-family:"Noto Sans TC",sans-serif;}
+.combo-lab{fill:var(--ink);font-size:15.5px;font-weight:700;font-family:"Noto Sans TC",sans-serif;}
+.combo-sub{fill:var(--muted);font-size:11.5px;font-family:"Noto Sans TC",sans-serif;}
+.val-lab{fill:var(--ink);font-size:12.5px;font-family:"Noto Sans TC",sans-serif;}
+.bar-region{fill:var(--region)} .bar-nation{fill:var(--nation)}
+.row-lab{fill:var(--ink);font-size:13.5px;font-weight:500;font-family:"Noto Sans TC",sans-serif;}
+.row-lab.ref{font-weight:700;}
+.row-sub{fill:var(--muted);font-size:10.5px;font-family:"Noto Sans TC",sans-serif;}
+.seg-noc{fill:var(--seg-noc)} .seg-c1{fill:var(--seg-c1)} .seg-c2{fill:var(--seg-c2)} .seg-c3{fill:var(--seg-c3)}
+.seg-lab{font-size:12px;font-weight:600;font-family:"Noto Sans TC",sans-serif;}
+.seg-lab.light{fill:var(--seg-lab-light)} .seg-lab.dark{fill:var(--seg-lab-dark)}
+.foot{font-size:.85rem;color:var(--muted);margin:10px 2px 0;}
+.sortbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;font-size:.9rem;}
+.sortbar span{color:var(--muted);}
+.sortbtn{min-height:38px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);font:inherit;font-size:.9rem;cursor:pointer;}
+.sortbtn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700;}
+@media (prefers-color-scheme: dark){.sortbtn[aria-pressed="true"]{color:#0d1512;}}
+.tablebox{overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow);}
+table{border-collapse:collapse;width:100%;font-size:.92rem;}
+thead th{background:var(--panel2);color:var(--ink);font-weight:700;text-align:right;padding:10px 10px;border-bottom:2px solid var(--line);white-space:nowrap;}
+thead th:nth-child(1),thead th:nth-child(2){text-align:left;}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;}
+tbody td:nth-child(1),tbody td:nth-child(2){text-align:left;}
+tbody tr:last-child td{border-bottom:none;}
+.rank{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;
+  background:var(--chip);color:var(--muted);font-weight:700;font-size:.85rem;}
+.rank.top{background:var(--teal);color:#fff;}
+@media (prefers-color-scheme: dark){.rank.top{color:#0d1512;}}
+.sch-name{font-weight:600;}
+.sch-code{display:block;font-size:.75rem;color:var(--muted);}
+.explore-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:6px;}
+.explore-ctl label{font-weight:600;}
+select{min-height:44px;font:inherit;font-size:1rem;padding:8px 12px;border-radius:10px;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink);max-width:100%;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px;}
+.chips span{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:4px 12px;font-size:.88rem;}
+.chips b{color:var(--teal);}
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;}
+.insight{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.insight h3{margin:0 0 6px;font-size:1.02rem;color:var(--teal);}
+.insight p{margin:0;font-size:.93rem;}
+.notes{font-size:.92rem;}
+.notes li{margin-bottom:8px;}
+.notes b{color:var(--teal);}
+footer{margin-top:44px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:.85rem;}
+@media (max-width:680px){
+  .wrap{padding:20px 12px 44px;}
+  .card{padding:12px 10px;}
+  .tablebox{border:none;background:transparent;box-shadow:none;overflow:visible;}
+  table,tbody,tr,td{display:block;width:100%;}
+  thead{display:none;}
+  tbody tr{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:12px 14px;margin-bottom:12px;box-shadow:var(--shadow);}
+  tbody td{border:none;padding:3px 0;text-align:left;display:flex;justify-content:space-between;gap:14px;white-space:normal;}
+  tbody td::before{content:attr(data-h);color:var(--muted);font-size:.85rem;flex-shrink:0;}
+  tbody td:first-child{justify-content:flex-start;}
+  tbody td:first-child::before{content:"";}
+  .sch-code{display:inline;margin-left:8px;}
+}
+@media print{ .sortbar,.explore-ctl{display:none;} body{background:#fff;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <span class="doc-tag">康軒教育會考模擬考 · 校際比較</span>
+  <h1>115 學年康軒教育會考模擬考</h1>
+  <p class="subtitle">校際能力等級成績組距表 — 高雄區 24 校 × 全區 × 全國對照</p>
+  <ul class="meta">
+    <li><b>編號</b>RK401A</li>
+    <li><b>考區</b>高雄區</li>
+    <li><b>範圍</b>第 2.4 冊</li>
+    <li><b>考試日期</b>2026/10/29、10/30</li>
+    <li><b>製表日期</b>2026/11/09</li>
+  </ul>
+  <p class="explain"><b>等級說明：</b>A 代表「精熟」、B 代表「基礎」、C 代表「待加強」。組合如「4A1B」表示五科中有 4 科精熟、1 科基礎。積分換算為每科 A 計 6 分、B 計 4 分、C 計 2 分，五科滿分 30 分（5A＝30 分、5B＝20 分、5C＝10 分）。</p>
+</header>
+
+<section aria-label="全區總覽">
+  <div class="sec-head"><span class="sec-no">01</span><h2>全區總覽：高雄區與全國對照</h2></div>
+  <div class="kpis">
+    <div class="kpi"><div class="lab">全區考生（24 校加總）</div><div class="big">6,206 <small>人</small></div><div class="cmp">全國共 22,519 人</div></div>
+    <div class="kpi"><div class="lab">全區平均積分</div><div class="big">20.87 <small>分</small></div><div class="cmp">全國 20.36 分，高 <b>0.51 分</b></div></div>
+    <div class="kpi"><div class="lab">5A（五科全精熟）</div><div class="big">10.2<small>%</small></div><div class="cmp">633 人 · 全國 7.5%</div></div>
+    <div class="kpi"><div class="lab">4A 以上</div><div class="big">17.3<small>%</small></div><div class="cmp">1,075 人 · 全國 13.5%</div></div>
+    <div class="kpi"><div class="lab">至少 1 科精熟</div><div class="big">46.7<small>%</small></div><div class="cmp">全國 42.8%</div></div>
+    <div class="kpi"><div class="lab">無待加強（無 C）</div><div class="big">65.7<small>%</small></div><div class="cmp">全國 62.2% · 3 科以上 C 占 15.5%</div></div>
+  </div>
+</section>
+
+<section aria-label="組距分布">
+  <div class="sec-head"><span class="sec-no">02</span><h2>組距分布：21 種等級組合占比</h2></div>
+  <p class="sec-note">依原表順序（積分由高至低）排列。每條長條都標示占比與人數；全區最大組為「5B」五科全基礎，占 21.3%（1,322 人）。</p>
+  <div class="card">
+    <div class="legend"><span><span class="sw sw-region"></span>高雄全區（6,206 人）</span><span><span class="sw sw-nation"></span>全國（22,519 人）</span></div>
+    <svg viewBox="0 0 1040 1079" role="img" aria-label="全區與全國各能力等級組合占比長條圖" class="chart"><line x1="168.0" y1="26" x2="168.0" y2="1075" class="grid"/><text x="168.0" y="20" class="axis-lab" text-anchor="middle">0%</text><line x1="288.0" y1="26" x2="288.0" y2="1075" class="grid"/><text x="288.0" y="20" class="axis-lab" text-anchor="middle">5%</text><line x1="408.0" y1="26" x2="408.0" y2="1075" class="grid"/><text x="408.0" y="20" class="axis-lab" text-anchor="middle">10%</text><line x1="528.0" y1="26" x2="528.0" y2="1075" class="grid"/><text x="528.0" y="20" class="axis-lab" text-anchor="middle">15%</text><line x1="648.0" y1="26" x2="648.0" y2="1075" class="grid"/><text x="648.0" y="20" class="axis-lab" text-anchor="middle">20%</text><line x1="768.0" y1="26" x2="768.0" y2="1075" class="grid"/><text x="768.0" y="20" class="axis-lab" text-anchor="middle">25%</text><text x="154" y="59" class="combo-lab" text-anchor="end">5A</text><text x="154" y="75" class="combo-sub" text-anchor="end">30 分</text><rect x="168" y="44" width="244.8" height="15" rx="3" class="bar-region"/><text x="420.8" y="56" class="val-lab">10.2% · 633 人</text><rect x="168" y="63" width="180.0" height="15" rx="3" class="bar-nation"/><text x="356.0" y="75" class="val-lab">7.5% · 1,689 人</text><text x="154" y="108" class="combo-lab" text-anchor="end">4A1B</text><text x="154" y="124" class="combo-sub" text-anchor="end">28 分</text><rect x="168" y="93" width="170.9" height="15" rx="3" class="bar-region"/><text x="346.9" y="105" class="val-lab">7.1% · 442 人</text><rect x="168" y="112" width="144.8" height="15" rx="3" class="bar-nation"/><text x="320.8" y="124" class="val-lab">6.0% · 1,359 人</text><text x="154" y="157" class="combo-lab" text-anchor="end">4A1C</text><text x="154" y="173" class="combo-sub" text-anchor="end">26 分</text><rect x="168" y="142" width="0.0" height="15" rx="3" class="bar-region"/><text x="176.0" y="154" class="val-lab">0.0% · 0 人</text><rect x="168" y="161" width="0.2" height="15" rx="3" class="bar-nation"/><text x="176.2" y="173" class="val-lab">0.0% · 2 人</text><text x="154" y="206" class="combo-lab" text-anchor="end">3A2B</text><text x="154" y="222" class="combo-sub" text-anchor="end">26 分</text><rect x="168" y="191" width="165.5" height="15" rx="3" class="bar-region"/><text x="341.5" y="203" class="val-lab">6.9% · 428 人</text><rect x="168" y="210" width="145.8" height="15" rx="3" class="bar-nation"/><text x="321.8" y="222" class="val-lab">6.1% · 1,368 人</text><text x="154" y="255" class="combo-lab" text-anchor="end">3A1B1C</text><text x="154" y="271" class="combo-sub" text-anchor="end">24 分</text><rect x="168" y="240" width="1.5" height="15" rx="3" class="bar-region"/><text x="177.5" y="252" class="val-lab">0.1% · 4 人</text><rect x="168" y="259" width="0.6" height="15" rx="3" class="bar-nation"/><text x="176.6" y="271" class="val-lab">0.0% · 6 人</text><text x="154" y="304" class="combo-lab" text-anchor="end">2A3B</text><text x="154" y="320" class="combo-sub" text-anchor="end">24 分</text><rect x="168" y="289" width="193.4" height="15" rx="3" class="bar-region"/><text x="369.4" y="301" class="val-lab">8.1% · 500 人</text><rect x="168" y="308" width="190.7" height="15" rx="3" class="bar-nation"/><text x="366.7" y="320" class="val-lab">7.9% · 1,789 人</text><text x="154" y="353" class="combo-lab" text-anchor="end">3A2C</text><text x="154" y="369" class="combo-sub" text-anchor="end">22 分</text><rect x="168" y="338" width="0.4" height="15" rx="3" class="bar-region"/><text x="176.4" y="350" class="val-lab">0.0% · 1 人</text><rect x="168" y="357" width="0.1" height="15" rx="3" class="bar-nation"/><text x="176.1" y="369" class="val-lab">0.0% · 1 人</text><text x="154" y="402" class="combo-lab" text-anchor="end">2A2B1C</text><text x="154" y="418" class="combo-sub" text-anchor="end">22 分</text><rect x="168" y="387" width="5.4" height="15" rx="3" class="bar-region"/><text x="181.4" y="399" class="val-lab">0.2% · 14 人</text><rect x="168" y="406" width="4.7" height="15" rx="3" class="bar-nation"/><text x="180.7" y="418" class="val-lab">0.2% · 44 人</text><text x="154" y="451" class="combo-lab" text-anchor="end">1A4B</text><text x="154" y="467" class="combo-sub" text-anchor="end">22 分</text><rect x="168" y="436" width="290.4" height="15" rx="3" class="bar-region"/><text x="466.4" y="448" class="val-lab">12.1% · 751 人</text><rect x="168" y="455" width="309.2" height="15" rx="3" class="bar-nation"/><text x="485.2" y="467" class="val-lab">12.9% · 2,901 人</text><text x="154" y="500" class="combo-lab" text-anchor="end">2A1B2C</text><text x="154" y="516" class="combo-sub" text-anchor="end">20 分</text><rect x="168" y="485" width="1.2" height="15" rx="3" class="bar-region"/><text x="177.2" y="497" class="val-lab">0.0% · 3 人</text><rect x="168" y="504" width="0.4" height="15" rx="3" class="bar-nation"/><text x="176.4" y="516" class="val-lab">0.0% · 4 人</text><text x="154" y="549" class="combo-lab" text-anchor="end">1A3B1C</text><text x="154" y="565" class="combo-sub" text-anchor="end">20 分</text><rect x="168" y="534" width="34.0" height="15" rx="3" class="bar-region"/><text x="210.0" y="546" class="val-lab">1.4% · 88 人</text><rect x="168" y="553" width="38.2" height="15" rx="3" class="bar-nation"/><text x="214.2" y="565" class="val-lab">1.6% · 358 人</text><text x="154" y="598" class="combo-lab" text-anchor="end">5B</text><text x="154" y="614" class="combo-sub" text-anchor="end">20 分</text><rect x="168" y="583" width="511.2" height="15" rx="3" class="bar-region"/><text x="687.2" y="595" class="val-lab">21.3% · 1,322 人</text><rect x="168" y="602" width="522.4" height="15" rx="3" class="bar-nation"/><text x="698.4" y="614" class="val-lab">21.8% · 4,902 人</text><text x="154" y="647" class="combo-lab" text-anchor="end">2A3C</text><text x="154" y="663" class="combo-sub" text-anchor="end">18 分</text><rect x="168" y="632" width="0.0" height="15" rx="3" class="bar-region"/><text x="176.0" y="644" class="val-lab">0.0% · 0 人</text><rect x="168" y="651" width="0.0" height="15" rx="3" class="bar-nation"/><text x="176.0" y="663" class="val-lab">0.0% · 0 人</text><text x="154" y="696" class="combo-lab" text-anchor="end">1A2B2C</text><text x="154" y="712" class="combo-sub" text-anchor="end">18 分</text><rect x="168" y="681" width="8.5" height="15" rx="3" class="bar-region"/><text x="184.5" y="693" class="val-lab">0.4% · 22 人</text><rect x="168" y="700" width="7.6" height="15" rx="3" class="bar-nation"/><text x="183.6" y="712" class="val-lab">0.3% · 71 人</text><text x="154" y="745" class="combo-lab" text-anchor="end">4B1C</text><text x="154" y="761" class="combo-sub" text-anchor="end">18 分</text><rect x="168" y="730" width="238.2" height="15" rx="3" class="bar-region"/><text x="414.2" y="742" class="val-lab">9.9% · 616 人</text><rect x="168" y="749" width="275.9" height="15" rx="3" class="bar-nation"/><text x="451.9" y="761" class="val-lab">11.5% · 2,589 人</text><text x="154" y="794" class="combo-lab" text-anchor="end">1A1B3C</text><text x="154" y="810" class="combo-sub" text-anchor="end">16 分</text><rect x="168" y="779" width="2.3" height="15" rx="3" class="bar-region"/><text x="178.3" y="791" class="val-lab">0.1% · 6 人</text><rect x="168" y="798" width="1.8" height="15" rx="3" class="bar-nation"/><text x="177.8" y="810" class="val-lab">0.1% · 17 人</text><text x="154" y="843" class="combo-lab" text-anchor="end">3B2C</text><text x="154" y="859" class="combo-sub" text-anchor="end">16 分</text><rect x="168" y="828" width="161.3" height="15" rx="3" class="bar-region"/><text x="337.3" y="840" class="val-lab">6.7% · 417 人</text><rect x="168" y="847" width="193.9" height="15" rx="3" class="bar-nation"/><text x="369.9" y="859" class="val-lab">8.1% · 1,819 人</text><text x="154" y="892" class="combo-lab" text-anchor="end">1A4C</text><text x="154" y="908" class="combo-sub" text-anchor="end">14 分</text><rect x="168" y="877" width="1.5" height="15" rx="3" class="bar-region"/><text x="177.5" y="889" class="val-lab">0.1% · 4 人</text><rect x="168" y="896" width="1.9" height="15" rx="3" class="bar-nation"/><text x="177.9" y="908" class="val-lab">0.1% · 18 人</text><text x="154" y="941" class="combo-lab" text-anchor="end">2B3C</text><text x="154" y="957" class="combo-sub" text-anchor="end">14 分</text><rect x="168" y="926" width="133.0" height="15" rx="3" class="bar-region"/><text x="309.0" y="938" class="val-lab">5.5% · 344 人</text><rect x="168" y="945" width="144.5" height="15" rx="3" class="bar-nation"/><text x="320.5" y="957" class="val-lab">6.0% · 1,356 人</text><text x="154" y="990" class="combo-lab" text-anchor="end">1B4C</text><text x="154" y="1006" class="combo-sub" text-anchor="end">12 分</text><rect x="168" y="975" width="114.9" height="15" rx="3" class="bar-region"/><text x="290.9" y="987" class="val-lab">4.8% · 297 人</text><rect x="168" y="994" width="113.5" height="15" rx="3" class="bar-nation"/><text x="289.5" y="1006" class="val-lab">4.7% · 1,065 人</text><text x="154" y="1039" class="combo-lab" text-anchor="end">5C</text><text x="154" y="1055" class="combo-sub" text-anchor="end">10 分</text><rect x="168" y="1024" width="121.4" height="15" rx="3" class="bar-region"/><text x="297.4" y="1036" class="val-lab">5.1% · 314 人</text><rect x="168" y="1043" width="123.7" height="15" rx="3" class="bar-nation"/><text x="299.7" y="1055" class="val-lab">5.2% · 1,161 人</text></svg>
+    <p class="foot">註：全區「4A1C」「2A3C」兩組為 0 人；全國僅「2A3C」為 0 人。這類含 C 又含多 A 的組合在本次模擬考幾乎沒有出現。</p>
+  </div>
+</section>
+
+<section aria-label="各校待加強結構">
+  <div class="sec-head"><span class="sec-no">03</span><h2>各校待加強結構：有幾科落在 C</h2></div>
+  <p class="sec-note">把 21 種組合依「待加強（C）的科數」歸成四段，學校依「無 C 占比」由高至低排列。無 C 段越長，代表全校沒有任何一科待加強的學生越多。</p>
+  <div class="card">
+    <div class="legend">
+      <span><span class="sw sw-noc"></span>無 C</span>
+      <span><span class="sw sw-c1"></span>1 科 C</span>
+      <span><span class="sw sw-c2"></span>2 科 C</span>
+      <span><span class="sw sw-c3"></span>3 科以上 C</span>
+    </div>
+    <svg viewBox="0 0 1040 1080" role="img" aria-label="各校待加強科數結構百分百堆疊圖" class="chart"><text x="224" y="21" class="row-lab ref" text-anchor="end">全區</text><text x="224" y="34" class="row-sub" text-anchor="end">6,206 人</text><rect x="236.0" y="10" width="517.5" height="25" class="seg-noc"/><text x="494.8" y="27" class="seg-lab light" text-anchor="middle">65.7%</text><rect x="753.5" y="10" width="91.7" height="25" class="seg-c1"/><text x="799.4" y="27" class="seg-lab dark" text-anchor="middle">11.6%</text><rect x="845.2" y="10" width="56.2" height="25" class="seg-c2"/><text x="873.3" y="27" class="seg-lab dark" text-anchor="middle">7.1%</text><rect x="901.5" y="10" width="122.5" height="25" class="seg-c3"/><text x="962.7" y="27" class="seg-lab light" text-anchor="middle">15.5%</text><line x1="8" y1="43" x2="1032" y2="43" class="sep"/><text x="224" y="62" class="row-lab ref" text-anchor="end">全國</text><text x="224" y="75" class="row-sub" text-anchor="end">22,519 人</text><rect x="236.0" y="51" width="490.2" height="25" class="seg-noc"/><text x="481.1" y="68" class="seg-lab light" text-anchor="middle">62.2%</text><rect x="726.2" y="51" width="104.9" height="25" class="seg-c1"/><text x="778.6" y="68" class="seg-lab dark" text-anchor="middle">13.3%</text><rect x="831.1" y="51" width="66.3" height="25" class="seg-c2"/><text x="864.3" y="68" class="seg-lab dark" text-anchor="middle">8.4%</text><rect x="897.4" y="51" width="126.6" height="25" class="seg-c3"/><text x="960.7" y="68" class="seg-lab light" text-anchor="middle">16.1%</text><line x1="8" y1="84" x2="1032" y2="84" class="sep"/><text x="224" y="103" class="row-lab" text-anchor="end">青雲國中</text><text x="224" y="116" class="row-sub" text-anchor="end">53 人</text><rect x="236.0" y="92" width="788.0" height="25" class="seg-noc"/><text x="630.0" y="109" class="seg-lab light" text-anchor="middle">100.0%</text><text x="224" y="144" class="row-lab" text-anchor="end">市立橋頭國中</text><text x="224" y="157" class="row-sub" text-anchor="end">49 人</text><rect x="236.0" y="133" width="788.0" height="25" class="seg-noc"/><text x="630.0" y="150" class="seg-lab light" text-anchor="middle">100.0%</text><text x="224" y="185" class="row-lab" text-anchor="end">私立復華高中附設國中</text><text x="224" y="198" class="row-sub" text-anchor="end">234 人</text><rect x="236.0" y="174" width="777.9" height="25" class="seg-noc"/><text x="624.9" y="191" class="seg-lab light" text-anchor="middle">98.7%</text><rect x="1013.9" y="174" width="10.1" height="25" class="seg-c1"/><text x="224" y="226" class="row-lab" text-anchor="end">市立三民國中</text><text x="224" y="239" class="row-sub" text-anchor="end">49 人</text><rect x="236.0" y="215" width="771.9" height="25" class="seg-noc"/><text x="622.0" y="232" class="seg-lab light" text-anchor="middle">98.0%</text><rect x="1007.9" y="215" width="16.1" height="25" class="seg-c1"/><text x="224" y="267" class="row-lab" text-anchor="end">私立大榮高中附設國中</text><text x="224" y="280" class="row-sub" text-anchor="end">74 人</text><rect x="236.0" y="256" width="734.8" height="25" class="seg-noc"/><text x="603.4" y="273" class="seg-lab light" text-anchor="middle">93.2%</text><rect x="970.8" y="256" width="21.3" height="25" class="seg-c1"/><rect x="992.1" y="256" width="21.3" height="25" class="seg-c2"/><rect x="1013.4" y="256" width="10.6" height="25" class="seg-c3"/><text x="224" y="308" class="row-lab" text-anchor="end">市立五甲國中</text><text x="224" y="321" class="row-sub" text-anchor="end">60 人</text><rect x="236.0" y="297" width="656.7" height="25" class="seg-noc"/><text x="564.3" y="314" class="seg-lab light" text-anchor="middle">83.3%</text><rect x="892.7" y="297" width="65.7" height="25" class="seg-c1"/><text x="925.5" y="314" class="seg-lab dark" text-anchor="middle">8.3%</text><rect x="958.3" y="297" width="39.4" height="25" class="seg-c2"/><rect x="997.7" y="297" width="26.3" height="25" class="seg-c3"/><text x="224" y="349" class="row-lab" text-anchor="end">市立明華國中</text><text x="224" y="362" class="row-sub" text-anchor="end">597 人</text><rect x="236.0" y="338" width="611.1" height="25" class="seg-noc"/><text x="541.6" y="355" class="seg-lab light" text-anchor="middle">77.6%</text><rect x="847.1" y="338" width="73.9" height="25" class="seg-c1"/><text x="884.1" y="355" class="seg-lab dark" text-anchor="middle">9.4%</text><rect x="921.0" y="338" width="37.0" height="25" class="seg-c2"/><rect x="958.0" y="338" width="66.0" height="25" class="seg-c3"/><text x="991.0" y="355" class="seg-lab light" text-anchor="middle">8.4%</text><text x="224" y="390" class="row-lab" text-anchor="end">私立立志高中附設國中</text><text x="224" y="403" class="row-sub" text-anchor="end">189 人</text><rect x="236.0" y="379" width="596.2" height="25" class="seg-noc"/><text x="534.1" y="396" class="seg-lab light" text-anchor="middle">75.7%</text><rect x="832.2" y="379" width="83.4" height="25" class="seg-c1"/><text x="873.9" y="396" class="seg-lab dark" text-anchor="middle">10.6%</text><rect x="915.6" y="379" width="41.7" height="25" class="seg-c2"/><rect x="957.3" y="379" width="66.7" height="25" class="seg-c3"/><text x="990.6" y="396" class="seg-lab light" text-anchor="middle">8.5%</text><text x="224" y="431" class="row-lab" text-anchor="end">市立五福國中</text><text x="224" y="444" class="row-sub" text-anchor="end">865 人</text><rect x="236.0" y="420" width="590.3" height="25" class="seg-noc"/><text x="531.2" y="437" class="seg-lab light" text-anchor="middle">74.9%</text><rect x="826.3" y="420" width="82.0" height="25" class="seg-c1"/><text x="867.3" y="437" class="seg-lab dark" text-anchor="middle">10.4%</text><rect x="908.3" y="420" width="36.4" height="25" class="seg-c2"/><rect x="944.7" y="420" width="79.3" height="25" class="seg-c3"/><text x="984.4" y="437" class="seg-lab light" text-anchor="middle">10.1%</text><text x="224" y="472" class="row-lab" text-anchor="end">市立七賢國中</text><text x="224" y="485" class="row-sub" text-anchor="end">517 人</text><rect x="236.0" y="461" width="567.0" height="25" class="seg-noc"/><text x="519.5" y="478" class="seg-lab light" text-anchor="middle">72.0%</text><rect x="803.0" y="461" width="59.4" height="25" class="seg-c1"/><text x="832.7" y="478" class="seg-lab dark" text-anchor="middle">7.5%</text><rect x="862.4" y="461" width="59.4" height="25" class="seg-c2"/><text x="892.2" y="478" class="seg-lab dark" text-anchor="middle">7.5%</text><rect x="921.9" y="461" width="102.1" height="25" class="seg-c3"/><text x="972.9" y="478" class="seg-lab light" text-anchor="middle">13.0%</text><text x="224" y="513" class="row-lab" text-anchor="end">市立龍華國中</text><text x="224" y="526" class="row-sub" text-anchor="end">634 人</text><rect x="236.0" y="502" width="513.3" height="25" class="seg-noc"/><text x="492.7" y="519" class="seg-lab light" text-anchor="middle">65.1%</text><rect x="749.3" y="502" width="103.2" height="25" class="seg-c1"/><text x="800.9" y="519" class="seg-lab dark" text-anchor="middle">13.1%</text><rect x="852.5" y="502" width="59.7" height="25" class="seg-c2"/><text x="882.3" y="519" class="seg-lab dark" text-anchor="middle">7.6%</text><rect x="912.1" y="502" width="111.9" height="25" class="seg-c3"/><text x="968.1" y="519" class="seg-lab light" text-anchor="middle">14.2%</text><text x="224" y="554" class="row-lab" text-anchor="end">市立福山國中</text><text x="224" y="567" class="row-sub" text-anchor="end">699 人</text><rect x="236.0" y="543" width="508.4" height="25" class="seg-noc"/><text x="490.2" y="560" class="seg-lab light" text-anchor="middle">64.5%</text><rect x="744.4" y="543" width="120.6" height="25" class="seg-c1"/><text x="804.7" y="560" class="seg-lab dark" text-anchor="middle">15.3%</text><rect x="865.0" y="543" width="51.9" height="25" class="seg-c2"/><text x="891.0" y="560" class="seg-lab dark" text-anchor="middle">6.6%</text><rect x="916.9" y="543" width="107.1" height="25" class="seg-c3"/><text x="970.5" y="560" class="seg-lab light" text-anchor="middle">13.6%</text><text x="224" y="595" class="row-lab" text-anchor="end">私立正義高中附設國中</text><text x="224" y="608" class="row-sub" text-anchor="end">75 人</text><rect x="236.0" y="584" width="493.8" height="25" class="seg-noc"/><text x="482.9" y="601" class="seg-lab light" text-anchor="middle">62.7%</text><rect x="729.8" y="584" width="94.6" height="25" class="seg-c1"/><text x="777.1" y="601" class="seg-lab dark" text-anchor="middle">12.0%</text><rect x="824.4" y="584" width="73.5" height="25" class="seg-c2"/><text x="861.1" y="601" class="seg-lab dark" text-anchor="middle">9.3%</text><rect x="897.9" y="584" width="126.1" height="25" class="seg-c3"/><text x="961.0" y="601" class="seg-lab light" text-anchor="middle">16.0%</text><text x="224" y="636" class="row-lab" text-anchor="end">市立左營國中</text><text x="224" y="649" class="row-sub" text-anchor="end">618 人</text><rect x="236.0" y="625" width="478.2" height="25" class="seg-noc"/><text x="475.1" y="642" class="seg-lab light" text-anchor="middle">60.7%</text><rect x="714.2" y="625" width="100.7" height="25" class="seg-c1"/><text x="764.5" y="642" class="seg-lab dark" text-anchor="middle">12.8%</text><rect x="814.9" y="625" width="76.5" height="25" class="seg-c2"/><text x="853.1" y="642" class="seg-lab dark" text-anchor="middle">9.7%</text><rect x="891.4" y="625" width="132.6" height="25" class="seg-c3"/><text x="957.7" y="642" class="seg-lab light" text-anchor="middle">16.8%</text><text x="224" y="677" class="row-lab" text-anchor="end">市立英明國中</text><text x="224" y="690" class="row-sub" text-anchor="end">200 人</text><rect x="236.0" y="666" width="429.5" height="25" class="seg-noc"/><text x="450.7" y="683" class="seg-lab light" text-anchor="middle">54.5%</text><rect x="665.5" y="666" width="141.8" height="25" class="seg-c1"/><text x="736.4" y="683" class="seg-lab dark" text-anchor="middle">18.0%</text><rect x="807.3" y="666" width="47.3" height="25" class="seg-c2"/><text x="830.9" y="683" class="seg-lab dark" text-anchor="middle">6.0%</text><rect x="854.6" y="666" width="169.4" height="25" class="seg-c3"/><text x="939.3" y="683" class="seg-lab light" text-anchor="middle">21.5%</text><text x="224" y="718" class="row-lab" text-anchor="end">市立文府國中</text><text x="224" y="731" class="row-sub" text-anchor="end">246 人</text><rect x="236.0" y="707" width="422.8" height="25" class="seg-noc"/><text x="447.4" y="724" class="seg-lab light" text-anchor="middle">53.7%</text><rect x="658.8" y="707" width="112.1" height="25" class="seg-c1"/><text x="714.9" y="724" class="seg-lab dark" text-anchor="middle">14.2%</text><rect x="770.9" y="707" width="83.3" height="25" class="seg-c2"/><text x="812.6" y="724" class="seg-lab dark" text-anchor="middle">10.6%</text><rect x="854.2" y="707" width="169.8" height="25" class="seg-c3"/><text x="939.1" y="724" class="seg-lab light" text-anchor="middle">21.5%</text><text x="224" y="759" class="row-lab" text-anchor="end">私立中山工商附設國中</text><text x="224" y="772" class="row-sub" text-anchor="end">47 人</text><rect x="236.0" y="748" width="419.1" height="25" class="seg-noc"/><text x="445.6" y="765" class="seg-lab light" text-anchor="middle">53.2%</text><rect x="655.1" y="748" width="150.9" height="25" class="seg-c1"/><text x="730.6" y="765" class="seg-lab dark" text-anchor="middle">19.1%</text><rect x="806.0" y="748" width="134.1" height="25" class="seg-c2"/><text x="873.1" y="765" class="seg-lab dark" text-anchor="middle">17.0%</text><rect x="940.2" y="748" width="83.8" height="25" class="seg-c3"/><text x="982.1" y="765" class="seg-lab light" text-anchor="middle">10.6%</text><text x="224" y="800" class="row-lab" text-anchor="end">市立大仁國中</text><text x="224" y="813" class="row-sub" text-anchor="end">23 人</text><rect x="236.0" y="789" width="411.1" height="25" class="seg-noc"/><text x="441.6" y="806" class="seg-lab light" text-anchor="middle">52.2%</text><rect x="647.1" y="789" width="137.0" height="25" class="seg-c1"/><text x="715.7" y="806" class="seg-lab dark" text-anchor="middle">17.4%</text><rect x="784.2" y="789" width="102.8" height="25" class="seg-c2"/><text x="835.6" y="806" class="seg-lab dark" text-anchor="middle">13.0%</text><rect x="887.0" y="789" width="137.0" height="25" class="seg-c3"/><text x="955.5" y="806" class="seg-lab light" text-anchor="middle">17.4%</text><text x="224" y="841" class="row-lab" text-anchor="end">市立鹽埕國中</text><text x="224" y="854" class="row-sub" text-anchor="end">166 人</text><rect x="236.0" y="830" width="370.3" height="25" class="seg-noc"/><text x="421.1" y="847" class="seg-lab light" text-anchor="middle">47.0%</text><rect x="606.3" y="830" width="142.4" height="25" class="seg-c1"/><text x="677.5" y="847" class="seg-lab dark" text-anchor="middle">18.1%</text><rect x="748.7" y="830" width="57.0" height="25" class="seg-c2"/><text x="777.2" y="847" class="seg-lab dark" text-anchor="middle">7.2%</text><rect x="805.6" y="830" width="218.4" height="25" class="seg-c3"/><text x="914.8" y="847" class="seg-lab light" text-anchor="middle">27.7%</text><text x="224" y="882" class="row-lab" text-anchor="end">市立鳳甲國中</text><text x="224" y="895" class="row-sub" text-anchor="end">467 人</text><rect x="236.0" y="871" width="367.8" height="25" class="seg-noc"/><text x="419.9" y="888" class="seg-lab light" text-anchor="middle">46.7%</text><rect x="603.8" y="871" width="101.2" height="25" class="seg-c1"/><text x="654.5" y="888" class="seg-lab dark" text-anchor="middle">12.8%</text><rect x="705.1" y="871" width="79.3" height="25" class="seg-c2"/><text x="744.7" y="888" class="seg-lab dark" text-anchor="middle">10.1%</text><rect x="784.4" y="871" width="239.6" height="25" class="seg-c3"/><text x="904.2" y="888" class="seg-lab light" text-anchor="middle">30.4%</text><text x="224" y="923" class="row-lab" text-anchor="end">市立南隆國中</text><text x="224" y="936" class="row-sub" text-anchor="end">47 人</text><rect x="236.0" y="912" width="251.5" height="25" class="seg-noc"/><text x="361.7" y="929" class="seg-lab light" text-anchor="middle">31.9%</text><rect x="487.5" y="912" width="117.4" height="25" class="seg-c1"/><text x="546.2" y="929" class="seg-lab dark" text-anchor="middle">14.9%</text><rect x="604.9" y="912" width="33.5" height="25" class="seg-c2"/><rect x="638.4" y="912" width="385.6" height="25" class="seg-c3"/><text x="831.2" y="929" class="seg-lab light" text-anchor="middle">48.9%</text><text x="224" y="964" class="row-lab" text-anchor="end">市立鼓山高中附設國中</text><text x="224" y="977" class="row-sub" text-anchor="end">113 人</text><rect x="236.0" y="953" width="223.2" height="25" class="seg-noc"/><text x="347.6" y="970" class="seg-lab light" text-anchor="middle">28.3%</text><rect x="459.2" y="953" width="139.5" height="25" class="seg-c1"/><text x="528.9" y="970" class="seg-lab dark" text-anchor="middle">17.7%</text><rect x="598.6" y="953" width="132.5" height="25" class="seg-c2"/><text x="664.9" y="970" class="seg-lab dark" text-anchor="middle">16.8%</text><rect x="731.1" y="953" width="292.9" height="25" class="seg-c3"/><text x="877.6" y="970" class="seg-lab light" text-anchor="middle">37.2%</text><text x="224" y="1005" class="row-lab" text-anchor="end">市立興仁國中</text><text x="224" y="1018" class="row-sub" text-anchor="end">23 人</text><rect x="236.0" y="994" width="205.6" height="25" class="seg-noc"/><text x="338.8" y="1011" class="seg-lab light" text-anchor="middle">26.1%</text><rect x="441.6" y="994" width="68.5" height="25" class="seg-c1"/><text x="475.8" y="1011" class="seg-lab dark" text-anchor="middle">8.7%</text><rect x="510.1" y="994" width="239.8" height="25" class="seg-c2"/><text x="630.0" y="1011" class="seg-lab dark" text-anchor="middle">30.4%</text><rect x="749.9" y="994" width="274.1" height="25" class="seg-c3"/><text x="887.0" y="1011" class="seg-lab light" text-anchor="middle">34.8%</text><text x="224" y="1046" class="row-lab" text-anchor="end">市立前鎮國中</text><text x="224" y="1059" class="row-sub" text-anchor="end">161 人</text><rect x="236.0" y="1035" width="181.1" height="25" class="seg-noc"/><text x="326.5" y="1052" class="seg-lab light" text-anchor="middle">23.0%</text><rect x="417.1" y="1035" width="122.4" height="25" class="seg-c1"/><text x="478.3" y="1052" class="seg-lab dark" text-anchor="middle">15.5%</text><rect x="539.5" y="1035" width="117.5" height="25" class="seg-c2"/><text x="598.2" y="1052" class="seg-lab dark" text-anchor="middle">14.9%</text><rect x="656.9" y="1035" width="367.1" height="25" class="seg-c3"/><text x="840.5" y="1052" class="seg-lab light" text-anchor="middle">46.6%</text></svg>
+    <p class="foot">段落寬度小於約 5% 時不標數字，精確占比見下方各校數據表。青雲國中與橋頭國中全校無人落入含 C 組合（無 C 達 100%），但兩校考生僅 53 人與 49 人，屬小樣本，解讀時請留意。</p>
+  </div>
+</section>
+
+<section aria-label="各校數據表">
+  <div class="sec-head"><span class="sec-no">04</span><h2>各校數據一覽</h2></div>
+  <div class="sortbar"><span>排序依據：</span>
+    <button type="button" class="sortbtn" data-key="avg" aria-pressed="true">平均積分</button>
+    <button type="button" class="sortbtn" data-key="fiveA" aria-pressed="false">5A 占比</button>
+    <button type="button" class="sortbtn" data-key="noC" aria-pressed="false">無 C 占比</button>
+    <button type="button" class="sortbtn" data-key="total" aria-pressed="false">考生人數</button>
+  </div>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>名次</th><th>學校</th><th>考生人數</th><th>平均積分</th><th>5A 人數</th><th>5A 占比</th><th>4A 以上</th><th>至少 1A</th><th>無 C</th><th>1 科 C</th><th>2 科 C</th><th>3 科以上 C</th></tr></thead>
+      <tbody id="rank-body"><tr><td data-h="名次"><span class="rank top">1</span></td><td data-h="學校"><span class="sch-name">私立復華高中附設國中</span><span class="sch-code">581301</span></td><td data-h="考生人數">234</td><td data-h="平均積分"><strong>28.13</strong></td><td data-h="5A 人數">135</td><td data-h="5A 占比">57.7%</td><td data-h="4A 以上">76.1%</td><td data-h="至少 1A">97.9%</td><td data-h="無 C">98.7%</td><td data-h="1 科 C">1.3%</td><td data-h="2 科 C">0.0%</td><td data-h="3 科以上 C">0.0%</td></tr><tr><td data-h="名次"><span class="rank top">2</span></td><td data-h="學校"><span class="sch-name">青雲國中</span><span class="sch-code">124502</span></td><td data-h="考生人數">53</td><td data-h="平均積分"><strong>26.04</strong></td><td data-h="5A 人數">15</td><td data-h="5A 占比">28.3%</td><td data-h="4A 以上">49.1%</td><td data-h="至少 1A">84.9%</td><td data-h="無 C">100.0%</td><td data-h="1 科 C">0.0%</td><td data-h="2 科 C">0.0%</td><td data-h="3 科以上 C">0.0%</td></tr><tr><td data-h="名次"><span class="rank top">3</span></td><td data-h="學校"><span class="sch-name">市立三民國中</span><span class="sch-code">553502</span></td><td data-h="考生人數">49</td><td data-h="平均積分"><strong>25.63</strong></td><td data-h="5A 人數">15</td><td data-h="5A 占比">30.6%</td><td data-h="4A 以上">44.9%</td><td data-h="至少 1A">85.7%</td><td data-h="無 C">98.0%</td><td data-h="1 科 C">2.0%</td><td data-h="2 科 C">0.0%</td><td data-h="3 科以上 C">0.0%</td></tr><tr><td data-h="名次"><span class="rank">4</span></td><td data-h="學校"><span class="sch-name">市立橋頭國中</span><span class="sch-code">124518</span></td><td data-h="考生人數">49</td><td data-h="平均積分"><strong>24.29</strong></td><td data-h="5A 人數">6</td><td data-h="5A 占比">12.2%</td><td data-h="4A 以上">24.5%</td><td data-h="至少 1A">81.6%</td><td data-h="無 C">100.0%</td><td data-h="1 科 C">0.0%</td><td data-h="2 科 C">0.0%</td><td data-h="3 科以上 C">0.0%</td></tr><tr><td data-h="名次"><span class="rank">5</span></td><td data-h="學校"><span class="sch-name">私立大榮高中附設國中</span><span class="sch-code">521303</span></td><td data-h="考生人數">74</td><td data-h="平均積分"><strong>23.65</strong></td><td data-h="5A 人數">12</td><td data-h="5A 占比">16.2%</td><td data-h="4A 以上">24.3%</td><td data-h="至少 1A">78.4%</td><td data-h="無 C">93.2%</td><td data-h="1 科 C">2.7%</td><td data-h="2 科 C">2.7%</td><td data-h="3 科以上 C">1.4%</td></tr><tr><td data-h="名次"><span class="rank">6</span></td><td data-h="學校"><span class="sch-name">市立明華國中</span><span class="sch-code">523503</span></td><td data-h="考生人數">597</td><td data-h="平均積分"><strong>22.56</strong></td><td data-h="5A 人數">86</td><td data-h="5A 占比">14.4%</td><td data-h="4A 以上">24.6%</td><td data-h="至少 1A">60.6%</td><td data-h="無 C">77.6%</td><td data-h="1 科 C">9.4%</td><td data-h="2 科 C">4.7%</td><td data-h="3 科以上 C">8.4%</td></tr><tr><td data-h="名次"><span class="rank">7</span></td><td data-h="學校"><span class="sch-name">市立五甲國中</span><span class="sch-code">124504</span></td><td data-h="考生人數">60</td><td data-h="平均積分"><strong>22.47</strong></td><td data-h="5A 人數">7</td><td data-h="5A 占比">11.7%</td><td data-h="4A 以上">18.3%</td><td data-h="至少 1A">56.7%</td><td data-h="無 C">83.3%</td><td data-h="1 科 C">8.3%</td><td data-h="2 科 C">5.0%</td><td data-h="3 科以上 C">3.3%</td></tr><tr><td data-h="名次"><span class="rank">8</span></td><td data-h="學校"><span class="sch-name">市立五福國中</span><span class="sch-code">583502</span></td><td data-h="考生人數">865</td><td data-h="平均積分"><strong>22.18</strong></td><td data-h="5A 人數">103</td><td data-h="5A 占比">11.9%</td><td data-h="4A 以上">23.2%</td><td data-h="至少 1A">54.9%</td><td data-h="無 C">74.9%</td><td data-h="1 科 C">10.4%</td><td data-h="2 科 C">4.6%</td><td data-h="3 科以上 C">10.1%</td></tr><tr><td data-h="名次"><span class="rank">9</span></td><td data-h="學校"><span class="sch-name">私立立志高中附設國中</span><span class="sch-code">551301</span></td><td data-h="考生人數">189</td><td data-h="平均積分"><strong>21.38</strong></td><td data-h="5A 人數">20</td><td data-h="5A 占比">10.6%</td><td data-h="4A 以上">15.9%</td><td data-h="至少 1A">43.4%</td><td data-h="無 C">75.7%</td><td data-h="1 科 C">10.6%</td><td data-h="2 科 C">5.3%</td><td data-h="3 科以上 C">8.5%</td></tr><tr><td data-h="名次"><span class="rank">10</span></td><td data-h="學校"><span class="sch-name">市立七賢國中</span><span class="sch-code">523504</span></td><td data-h="考生人數">517</td><td data-h="平均積分"><strong>21.21</strong></td><td data-h="5A 人數">57</td><td data-h="5A 占比">11.0%</td><td data-h="4A 以上">19.0%</td><td data-h="至少 1A">47.2%</td><td data-h="無 C">72.0%</td><td data-h="1 科 C">7.5%</td><td data-h="2 科 C">7.5%</td><td data-h="3 科以上 C">13.0%</td></tr><tr><td data-h="名次"><span class="rank">11</span></td><td data-h="學校"><span class="sch-name">市立龍華國中</span><span class="sch-code">533504</span></td><td data-h="考生人數">634</td><td data-h="平均積分"><strong>20.74</strong></td><td data-h="5A 人數">56</td><td data-h="5A 占比">8.8%</td><td data-h="4A 以上">15.5%</td><td data-h="至少 1A">44.3%</td><td data-h="無 C">65.1%</td><td data-h="1 科 C">13.1%</td><td data-h="2 科 C">7.6%</td><td data-h="3 科以上 C">14.2%</td></tr><tr><td data-h="名次"><span class="rank">12</span></td><td data-h="學校"><span class="sch-name">市立福山國中</span><span class="sch-code">533505</span></td><td data-h="考生人數">699</td><td data-h="平均積分"><strong>20.40</strong></td><td data-h="5A 人數">41</td><td data-h="5A 占比">5.9%</td><td data-h="4A 以上">11.2%</td><td data-h="至少 1A">42.9%</td><td data-h="無 C">64.5%</td><td data-h="1 科 C">15.3%</td><td data-h="2 科 C">6.6%</td><td data-h="3 科以上 C">13.6%</td></tr><tr><td data-h="名次"><span class="rank">13</span></td><td data-h="學校"><span class="sch-name">市立左營國中</span><span class="sch-code">533501</span></td><td data-h="考生人數">618</td><td data-h="平均積分"><strong>20.07</strong></td><td data-h="5A 人數">32</td><td data-h="5A 占比">5.2%</td><td data-h="4A 以上">11.0%</td><td data-h="至少 1A">42.2%</td><td data-h="無 C">60.7%</td><td data-h="1 科 C">12.8%</td><td data-h="2 科 C">9.7%</td><td data-h="3 科以上 C">16.8%</td></tr><tr><td data-h="名次"><span class="rank">14</span></td><td data-h="學校"><span class="sch-name">市立大仁國中</span><span class="sch-code">583503</span></td><td data-h="考生人數">23</td><td data-h="平均積分"><strong>20.00</strong></td><td data-h="5A 人數">2</td><td data-h="5A 占比">8.7%</td><td data-h="4A 以上">8.7%</td><td data-h="至少 1A">39.1%</td><td data-h="無 C">52.2%</td><td data-h="1 科 C">17.4%</td><td data-h="2 科 C">13.0%</td><td data-h="3 科以上 C">17.4%</td></tr><tr><td data-h="名次"><span class="rank">15</span></td><td data-h="學校"><span class="sch-name">私立中山工商附設國中</span><span class="sch-code">121405</span></td><td data-h="考生人數">47</td><td data-h="平均積分"><strong>19.83</strong></td><td data-h="5A 人數">3</td><td data-h="5A 占比">6.4%</td><td data-h="4A 以上">10.6%</td><td data-h="至少 1A">36.2%</td><td data-h="無 C">53.2%</td><td data-h="1 科 C">19.1%</td><td data-h="2 科 C">17.0%</td><td data-h="3 科以上 C">10.6%</td></tr><tr><td data-h="名次"><span class="rank">16</span></td><td data-h="學校"><span class="sch-name">市立英明國中</span><span class="sch-code">583505</span></td><td data-h="考生人數">200</td><td data-h="平均積分"><strong>19.75</strong></td><td data-h="5A 人數">11</td><td data-h="5A 占比">5.5%</td><td data-h="4A 以上">10.5%</td><td data-h="至少 1A">44.5%</td><td data-h="無 C">54.5%</td><td data-h="1 科 C">18.0%</td><td data-h="2 科 C">6.0%</td><td data-h="3 科以上 C">21.5%</td></tr><tr><td data-h="名次"><span class="rank">17</span></td><td data-h="學校"><span class="sch-name">私立正義高中附設國中</span><span class="sch-code">121318</span></td><td data-h="考生人數">75</td><td data-h="平均積分"><strong>19.60</strong></td><td data-h="5A 人數">2</td><td data-h="5A 占比">2.7%</td><td data-h="4A 以上">8.0%</td><td data-h="至少 1A">33.3%</td><td data-h="無 C">62.7%</td><td data-h="1 科 C">12.0%</td><td data-h="2 科 C">9.3%</td><td data-h="3 科以上 C">16.0%</td></tr><tr><td data-h="名次"><span class="rank">18</span></td><td data-h="學校"><span class="sch-name">市立文府國中</span><span class="sch-code">533506</span></td><td data-h="考生人數">246</td><td data-h="平均積分"><strong>19.08</strong></td><td data-h="5A 人數">7</td><td data-h="5A 占比">2.8%</td><td data-h="4A 以上">6.5%</td><td data-h="至少 1A">32.5%</td><td data-h="無 C">53.7%</td><td data-h="1 科 C">14.2%</td><td data-h="2 科 C">10.6%</td><td data-h="3 科以上 C">21.5%</td></tr><tr><td data-h="名次"><span class="rank">19</span></td><td data-h="學校"><span class="sch-name">市立鹽埕國中</span><span class="sch-code">513501</span></td><td data-h="考生人數">166</td><td data-h="平均積分"><strong>18.29</strong></td><td data-h="5A 人數">6</td><td data-h="5A 占比">3.6%</td><td data-h="4A 以上">4.8%</td><td data-h="至少 1A">27.7%</td><td data-h="無 C">47.0%</td><td data-h="1 科 C">18.1%</td><td data-h="2 科 C">7.2%</td><td data-h="3 科以上 C">27.7%</td></tr><tr><td data-h="名次"><span class="rank">20</span></td><td data-h="學校"><span class="sch-name">市立鳳甲國中</span><span class="sch-code">124505</span></td><td data-h="考生人數">467</td><td data-h="平均積分"><strong>18.21</strong></td><td data-h="5A 人數">16</td><td data-h="5A 占比">3.4%</td><td data-h="4A 以上">5.6%</td><td data-h="至少 1A">27.8%</td><td data-h="無 C">46.7%</td><td data-h="1 科 C">12.8%</td><td data-h="2 科 C">10.1%</td><td data-h="3 科以上 C">30.4%</td></tr><tr><td data-h="名次"><span class="rank">21</span></td><td data-h="學校"><span class="sch-name">市立鼓山高中附設國中</span><span class="sch-code">523301</span></td><td data-h="考生人數">113</td><td data-h="平均積分"><strong>16.50</strong></td><td data-h="5A 人數">0</td><td data-h="5A 占比">0.0%</td><td data-h="4A 以上">0.9%</td><td data-h="至少 1A">17.7%</td><td data-h="無 C">28.3%</td><td data-h="1 科 C">17.7%</td><td data-h="2 科 C">16.8%</td><td data-h="3 科以上 C">37.2%</td></tr><tr><td data-h="名次"><span class="rank">22</span></td><td data-h="學校"><span class="sch-name">市立興仁國中</span><span class="sch-code">593505</span></td><td data-h="考生人數">23</td><td data-h="平均積分"><strong>16.09</strong></td><td data-h="5A 人數">0</td><td data-h="5A 占比">0.0%</td><td data-h="4A 以上">0.0%</td><td data-h="至少 1A">8.7%</td><td data-h="無 C">26.1%</td><td data-h="1 科 C">8.7%</td><td data-h="2 科 C">30.4%</td><td data-h="3 科以上 C">34.8%</td></tr><tr><td data-h="名次"><span class="rank">23</span></td><td data-h="學校"><span class="sch-name">市立南隆國中</span><span class="sch-code">124531</span></td><td data-h="考生人數">47</td><td data-h="平均積分"><strong>16.04</strong></td><td data-h="5A 人數">0</td><td data-h="5A 占比">0.0%</td><td data-h="4A 以上">0.0%</td><td data-h="至少 1A">14.9%</td><td data-h="無 C">31.9%</td><td data-h="1 科 C">14.9%</td><td data-h="2 科 C">4.3%</td><td data-h="3 科以上 C">48.9%</td></tr><tr><td data-h="名次"><span class="rank">24</span></td><td data-h="學校"><span class="sch-name">市立前鎮國中</span><span class="sch-code">593502</span></td><td data-h="考生人數">161</td><td data-h="平均積分"><strong>15.69</strong></td><td data-h="5A 人數">1</td><td data-h="5A 占比">0.6%</td><td data-h="4A 以上">1.9%</td><td data-h="至少 1A">11.2%</td><td data-h="無 C">23.0%</td><td data-h="1 科 C">15.5%</td><td data-h="2 科 C">14.9%</td><td data-h="3 科以上 C">46.6%</td></tr></tbody>
+    </table>
+  </div>
+  <p class="foot">名次與列序會依所選排序依據更新；占比皆以該校考生總人數為分母。</p>
+</section>
+
+<section aria-label="單校明細">
+  <div class="sec-head"><span class="sec-no">05</span><h2>單校組距明細</h2></div>
+  <p class="sec-note">選一所學校（或全區、全國），看它在 21 種等級組合的人數、占比與累計占比。</p>
+  <div class="card">
+    <div class="explore-ctl"><label for="sch-select">選擇學校</label><select id="sch-select" aria-label="選擇學校"></select></div>
+    <div class="chips" id="exp-chips"></div>
+    <div id="exp-chart"></div>
+  </div>
+</section>
+
+<section aria-label="判讀重點">
+  <div class="sec-head"><span class="sec-no">06</span><h2>判讀重點</h2></div>
+  <div class="insights">
+    <div class="insight"><h3>高雄區整體略優於全國</h3><p>全區平均積分 20.87 分，高於全國的 20.36 分；5A 占 10.2%，比全國 7.5% 高 2.7 個百分點；無 C 占 65.7%，亦高於全國 62.2%。</p></div>
+    <div class="insight"><h3>校際落差相當大</h3><p>平均積分最高的私立復華高中附設國中為 28.13 分，最低的市立前鎮國中為 15.69 分，相差 12.44 分。5A 人數為 0 的學校有 3 所：市立南隆國中、市立鼓山高中附設國中、市立興仁國中。</p></div>
+    <div class="insight"><h3>待加強集中在少數學校</h3><p>前鎮國中與南隆國中各有約 47% 與 49% 的學生有 3 科以上待加強；相對地，復華高中附設國中 5A 占 57.7%、無 C 占 98.7%，為全區最突出的一校。</p></div>
+    <div class="insight"><h3>中間層最厚</h3><p>全區人數最多的三個組合是 5B（1,322 人）、1A4B（751 人）與 4B1C（616 人），合計占全區 43.3%。多數學生集中在「全基礎」與「一科精熟」附近，是拉升平均最有空間的一群。</p></div>
+  </div>
+</section>
+
+<section aria-label="資料說明">
+  <div class="sec-head"><span class="sec-no">07</span><h2>資料說明</h2></div>
+  <ul class="notes">
+    <li><b>來源：</b>使用者提供的 RK401A.xlsx，工作表「30分考區」。本頁所有人數、占比與平均積分均由表內各校「人數」列重新計算；「全區」列經核對與 24 校逐欄加總完全相符，各校「累計」列亦核對無誤。</li>
+    <li><b>頁首數字不一致：</b>原表頁首標示「全區人數：6,352」，但表內 24 校加總與「全區」列均為 6,206 人，兩者相差 146 人；頁首另標示「全校人數：76」，在表內找不到對應的學校列。本頁一律以表內加總為準（全區 6,206 人、全國 22,519 人），不採用頁首的 6,352 與 76。</li>
+    <li><b>平均積分：</b>以各組合人數乘以該組合積分（A 6 分、B 4 分、C 2 分）加權平均，四捨五入至小數第二位。</li>
+    <li><b>小樣本提醒：</b>大仁國中、興仁國中各僅 23 人，橋頭國中、三民國中各 49 人，少數學生即可讓占比大幅變動，跨校比較時請一併看人數。</li>
+  </ul>
+</section>
+
+<footer>資料來源：RK401A.xlsx（115 學年康軒教育會考模擬考・校際能力等級成績組距表，製表日期 2026/11/09）・本頁為靜態整理，數字以開啟時所載資料為準。</footer>
+
+</div>
+<script>
+
+var LABELS = ["5A", "4A1B", "4A1C", "3A2B", "3A1B1C", "2A3B", "3A2C", "2A2B1C", "1A4B", "2A1B2C", "1A3B1C", "5B", "2A3C", "1A2B2C", "4B1C", "1A1B3C", "3B2C", "1A4C", "2B3C", "1B4C", "5C"], SCORES = [30, 28, 26, 26, 24, 24, 22, 22, 22, 20, 20, 20, 18, 18, 18, 16, 16, 14, 14, 12, 10], DATA = [{"code": "121318", "name": "私立正義高中附設國中", "total": 75, "nums": [2, 4, 0, 3, 0, 4, 0, 0, 10, 0, 1, 24, 0, 0, 8, 1, 7, 0, 4, 3, 4], "cum": [2, 6, 6, 9, 9, 13, 13, 13, 23, 23, 24, 48, 48, 48, 56, 57, 64, 64, 68, 71, 75], "avg": 19.6, "fiveA": 2, "ge4A": 6, "ge1A": 25, "noC": 47, "c1": 9, "c2": 7, "c3": 12}, {"code": "121405", "name": "私立中山工商附設國中", "total": 47, "nums": [3, 2, 0, 1, 0, 6, 0, 0, 4, 0, 1, 9, 0, 0, 8, 0, 8, 0, 0, 3, 2], "cum": [3, 5, 5, 6, 6, 12, 12, 12, 16, 16, 17, 26, 26, 26, 34, 34, 42, 42, 42, 45, 47], "avg": 19.83, "fiveA": 3, "ge4A": 5, "ge1A": 17, "noC": 25, "c1": 9, "c2": 8, "c3": 5}, {"code": "124502", "name": "青雲國中", "total": 53, "nums": [15, 11, 0, 8, 0, 6, 0, 0, 5, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0], "cum": [15, 26, 26, 34, 34, 40, 40, 40, 45, 45, 45, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53], "avg": 26.04, "fiveA": 15, "ge4A": 26, "ge1A": 45, "noC": 53, "c1": 0, "c2": 0, "c3": 0}, {"code": "124504", "name": "市立五甲國中", "total": 60, "nums": [7, 4, 0, 5, 0, 7, 0, 1, 10, 0, 0, 17, 0, 0, 4, 0, 3, 0, 1, 1, 0], "cum": [7, 11, 11, 16, 16, 23, 23, 24, 34, 34, 34, 51, 51, 51, 55, 55, 58, 58, 59, 60, 60], "avg": 22.47, "fiveA": 7, "ge4A": 11, "ge1A": 34, "noC": 50, "c1": 5, "c2": 3, "c3": 2}, {"code": "124505", "name": "市立鳳甲國中", "total": 467, "nums": [16, 10, 0, 19, 0, 25, 0, 1, 47, 0, 11, 101, 0, 1, 48, 0, 46, 0, 56, 45, 41], "cum": [16, 26, 26, 45, 45, 70, 70, 71, 118, 118, 129, 230, 230, 231, 279, 279, 325, 325, 381, 426, 467], "avg": 18.21, "fiveA": 16, "ge4A": 26, "ge1A": 130, "noC": 218, "c1": 60, "c2": 47, "c3": 142}, {"code": "124518", "name": "市立橋頭國中", "total": 49, "nums": [6, 6, 0, 10, 0, 3, 0, 0, 15, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0], "cum": [6, 12, 12, 22, 22, 25, 25, 25, 40, 40, 40, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49], "avg": 24.29, "fiveA": 6, "ge4A": 12, "ge1A": 40, "noC": 49, "c1": 0, "c2": 0, "c3": 0}, {"code": "124531", "name": "市立南隆國中", "total": 47, "nums": [0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 1, 9, 0, 0, 6, 0, 2, 0, 7, 6, 10], "cum": [0, 0, 0, 2, 2, 4, 4, 4, 6, 6, 7, 16, 16, 16, 22, 22, 24, 24, 31, 37, 47], "avg": 16.04, "fiveA": 0, "ge4A": 0, "ge1A": 7, "noC": 15, "c1": 7, "c2": 2, "c3": 23}, {"code": "513501", "name": "市立鹽埕國中", "total": 166, "nums": [6, 2, 0, 7, 1, 12, 0, 2, 14, 0, 1, 37, 0, 0, 26, 0, 12, 1, 13, 9, 23], "cum": [6, 8, 8, 15, 16, 28, 28, 30, 44, 44, 45, 82, 82, 82, 108, 108, 120, 121, 134, 143, 166], "avg": 18.29, "fiveA": 6, "ge4A": 8, "ge1A": 46, "noC": 78, "c1": 30, "c2": 12, "c3": 46}, {"code": "521303", "name": "私立大榮高中附設國中", "total": 74, "nums": [12, 6, 0, 5, 0, 12, 0, 0, 23, 0, 0, 11, 0, 0, 2, 0, 2, 0, 0, 0, 1], "cum": [12, 18, 18, 23, 23, 35, 35, 35, 58, 58, 58, 69, 69, 69, 71, 71, 73, 73, 73, 73, 74], "avg": 23.65, "fiveA": 12, "ge4A": 18, "ge1A": 58, "noC": 69, "c1": 2, "c2": 2, "c3": 1}, {"code": "523301", "name": "市立鼓山高中附設國中", "total": 113, "nums": [0, 1, 0, 1, 0, 4, 0, 0, 11, 0, 3, 15, 0, 0, 17, 0, 19, 0, 14, 13, 15], "cum": [0, 1, 1, 2, 2, 6, 6, 6, 17, 17, 20, 35, 35, 35, 52, 52, 71, 71, 85, 98, 113], "avg": 16.5, "fiveA": 0, "ge4A": 1, "ge1A": 20, "noC": 32, "c1": 20, "c2": 19, "c3": 42}, {"code": "523503", "name": "市立明華國中", "total": 597, "nums": [86, 61, 0, 54, 1, 62, 0, 0, 84, 1, 11, 116, 0, 2, 44, 0, 25, 0, 24, 16, 10], "cum": [86, 147, 147, 201, 202, 264, 264, 264, 348, 349, 360, 476, 476, 478, 522, 522, 547, 547, 571, 587, 597], "avg": 22.56, "fiveA": 86, "ge4A": 147, "ge1A": 362, "noC": 463, "c1": 56, "c2": 28, "c3": 50}, {"code": "523504", "name": "市立七賢國中", "total": 517, "nums": [57, 41, 0, 32, 0, 44, 0, 0, 64, 0, 2, 134, 0, 2, 37, 1, 37, 1, 18, 24, 23], "cum": [57, 98, 98, 130, 130, 174, 174, 174, 238, 238, 240, 374, 374, 376, 413, 414, 451, 452, 470, 494, 517], "avg": 21.21, "fiveA": 57, "ge4A": 98, "ge1A": 244, "noC": 372, "c1": 39, "c2": 39, "c3": 67}, {"code": "533501", "name": "市立左營國中", "total": 618, "nums": [32, 36, 0, 45, 0, 50, 1, 2, 78, 0, 11, 134, 0, 4, 66, 2, 55, 0, 30, 35, 37], "cum": [32, 68, 68, 113, 113, 163, 164, 166, 244, 244, 255, 389, 389, 393, 459, 461, 516, 516, 546, 581, 618], "avg": 20.07, "fiveA": 32, "ge4A": 68, "ge1A": 261, "noC": 375, "c1": 79, "c2": 60, "c3": 104}, {"code": "533504", "name": "市立龍華國中", "total": 634, "nums": [56, 42, 0, 43, 0, 42, 0, 1, 84, 0, 10, 146, 0, 2, 72, 0, 46, 1, 36, 29, 24], "cum": [56, 98, 98, 141, 141, 183, 183, 184, 268, 268, 278, 424, 424, 426, 498, 498, 544, 545, 581, 610, 634], "avg": 20.74, "fiveA": 56, "ge4A": 98, "ge1A": 281, "noC": 413, "c1": 83, "c2": 48, "c3": 90}, {"code": "533505", "name": "市立福山國中", "total": 699, "nums": [41, 37, 0, 44, 1, 58, 0, 2, 94, 1, 17, 177, 0, 3, 87, 1, 42, 1, 27, 30, 36], "cum": [41, 78, 78, 122, 123, 181, 181, 183, 277, 278, 295, 472, 472, 475, 562, 563, 605, 606, 633, 663, 699], "avg": 20.4, "fiveA": 41, "ge4A": 78, "ge1A": 300, "noC": 451, "c1": 107, "c2": 46, "c3": 95}, {"code": "533506", "name": "市立文府國中", "total": 246, "nums": [7, 9, 0, 16, 1, 13, 0, 1, 27, 0, 4, 60, 0, 1, 29, 1, 25, 0, 19, 16, 17], "cum": [7, 16, 16, 32, 33, 46, 46, 47, 74, 74, 78, 138, 138, 139, 168, 169, 194, 194, 213, 229, 246], "avg": 19.08, "fiveA": 7, "ge4A": 16, "ge1A": 80, "noC": 132, "c1": 35, "c2": 26, "c3": 53}, {"code": "551301", "name": "私立立志高中附設國中", "total": 189, "nums": [20, 10, 0, 8, 0, 14, 0, 1, 26, 1, 1, 65, 0, 1, 18, 0, 8, 0, 11, 4, 1], "cum": [20, 30, 30, 38, 38, 52, 52, 53, 79, 80, 81, 146, 146, 147, 165, 165, 173, 173, 184, 188, 189], "avg": 21.38, "fiveA": 20, "ge4A": 30, "ge1A": 82, "noC": 143, "c1": 20, "c2": 10, "c3": 16}, {"code": "553502", "name": "市立三民國中", "total": 49, "nums": [15, 7, 0, 3, 0, 10, 0, 0, 7, 0, 0, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0], "cum": [15, 22, 22, 25, 25, 35, 35, 35, 42, 42, 42, 48, 48, 48, 49, 49, 49, 49, 49, 49, 49], "avg": 25.63, "fiveA": 15, "ge4A": 22, "ge1A": 42, "noC": 48, "c1": 1, "c2": 0, "c3": 0}, {"code": "581301", "name": "私立復華高中附設國中", "total": 234, "nums": [135, 43, 0, 21, 0, 14, 0, 0, 16, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0], "cum": [135, 178, 178, 199, 199, 213, 213, 213, 229, 229, 229, 231, 231, 231, 234, 234, 234, 234, 234, 234, 234], "avg": 28.13, "fiveA": 135, "ge4A": 178, "ge1A": 229, "noC": 231, "c1": 3, "c2": 0, "c3": 0}, {"code": "583502", "name": "市立五福國中", "total": 865, "nums": [103, 98, 0, 79, 0, 90, 0, 0, 95, 0, 7, 183, 0, 3, 83, 0, 37, 0, 44, 30, 13], "cum": [103, 201, 201, 280, 280, 370, 370, 370, 465, 465, 472, 655, 655, 658, 741, 741, 778, 778, 822, 852, 865], "avg": 22.18, "fiveA": 103, "ge4A": 201, "ge1A": 475, "noC": 648, "c1": 90, "c2": 40, "c3": 87}, {"code": "583503", "name": "市立大仁國中", "total": 23, "nums": [2, 0, 0, 3, 0, 1, 0, 0, 3, 0, 0, 3, 0, 0, 4, 0, 3, 0, 3, 0, 1], "cum": [2, 2, 2, 5, 5, 6, 6, 6, 9, 9, 9, 12, 12, 12, 16, 16, 19, 19, 22, 22, 23], "avg": 20.0, "fiveA": 2, "ge4A": 2, "ge1A": 9, "noC": 12, "c1": 4, "c2": 3, "c3": 4}, {"code": "583505", "name": "市立英明國中", "total": 200, "nums": [11, 10, 0, 15, 0, 18, 0, 2, 23, 0, 7, 32, 0, 3, 27, 0, 9, 0, 12, 13, 18], "cum": [11, 21, 21, 36, 36, 54, 54, 56, 79, 79, 86, 118, 118, 121, 148, 148, 157, 157, 169, 182, 200], "avg": 19.75, "fiveA": 11, "ge4A": 21, "ge1A": 89, "noC": 109, "c1": 36, "c2": 12, "c3": 43}, {"code": "593502", "name": "市立前鎮國中", "total": 161, "nums": [1, 2, 0, 3, 0, 3, 0, 1, 8, 0, 0, 20, 0, 0, 24, 0, 24, 0, 23, 17, 35], "cum": [1, 3, 3, 6, 6, 9, 9, 10, 18, 18, 18, 38, 38, 38, 62, 62, 86, 86, 109, 126, 161], "avg": 15.69, "fiveA": 1, "ge4A": 3, "ge1A": 18, "noC": 37, "c1": 25, "c2": 24, "c3": 75}, {"code": "593505", "name": "市立興仁國中", "total": 23, "nums": [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 4, 0, 0, 2, 0, 7, 0, 2, 3, 3], "cum": [0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 6, 6, 6, 8, 8, 15, 15, 17, 20, 23], "avg": 16.09, "fiveA": 0, "ge4A": 0, "ge1A": 2, "noC": 6, "c1": 2, "c2": 7, "c3": 8}, {"code": "", "name": "全區", "total": 6206, "nums": [633, 442, 0, 428, 4, 500, 1, 14, 751, 3, 88, 1322, 0, 22, 616, 6, 417, 4, 344, 297, 314], "cum": [633, 1075, 1075, 1503, 1507, 2007, 2008, 2022, 2773, 2776, 2864, 4186, 4186, 4208, 4824, 4830, 5247, 5251, 5595, 5892, 6206], "avg": 20.87, "fiveA": 633, "ge4A": 1075, "ge1A": 2896, "noC": 4076, "c1": 722, "c2": 443, "c3": 965}, {"code": "", "name": "全國", "total": 22519, "nums": [1689, 1359, 2, 1368, 6, 1789, 1, 44, 2901, 4, 358, 4902, 0, 71, 2589, 17, 1819, 18, 1356, 1065, 1161], "cum": [1689, 3048, 3050, 4418, 4424, 6213, 6214, 6258, 9159, 9163, 9521, 14423, 14423, 14494, 17083, 17100, 18919, 18937, 20293, 21358, 22519], "avg": 20.36, "fiveA": 1689, "ge4A": 3050, "ge1A": 9627, "noC": 14008, "c1": 2999, "c2": 1895, "c3": 3617}];
+function pct(n,t){return n/t*100;}
+function f1(x){return x.toFixed(1);}
+function num(n){return n.toLocaleString('en-US');}
+function ccount(lab){var m=lab.match(/(\d)C/); if(lab.indexOf('C')<0) return 0; return m?parseInt(m[1],10):1;}
+
+/* ---- ranking table sort ---- */
+var tbody = document.getElementById('rank-body');
+function renderTable(key){
+  var rows = DATA.slice(0,24);
+  function sortVal(s,k){
+    if(k==='avg') return s.avg;
+    if(k==='fiveA') return pct(s.fiveA,s.total);
+    if(k==='noC') return pct(s.noC,s.total);
+    if(k==='total') return s.total;
+    return s.avg;
+  }
+  rows.sort(function(a,b){ return sortVal(b,key)-sortVal(a,key); });
+  var html='';
+  rows.forEach(function(s,i){
+    var badge = i<3 ? '<span class="rank top">'+(i+1)+'</span>' : '<span class="rank">'+(i+1)+'</span>';
+    html += '<tr><td data-h="名次">'+badge+'</td>'
+      + '<td data-h="學校"><span class="sch-name">'+s.name+'</span><span class="sch-code">'+s.code+'</span></td>'
+      + '<td data-h="考生人數">'+num(s.total)+'</td>'
+      + '<td data-h="平均積分"><strong>'+s.avg.toFixed(2)+'</strong></td>'
+      + '<td data-h="5A 人數">'+num(s.fiveA)+'</td>'
+      + '<td data-h="5A 占比">'+f1(pct(s.fiveA,s.total))+'%</td>'
+      + '<td data-h="4A 以上">'+f1(pct(s.ge4A,s.total))+'%</td>'
+      + '<td data-h="至少 1A">'+f1(pct(s.ge1A,s.total))+'%</td>'
+      + '<td data-h="無 C">'+f1(pct(s.noC,s.total))+'%</td>'
+      + '<td data-h="1 科 C">'+f1(pct(s.c1,s.total))+'%</td>'
+      + '<td data-h="2 科 C">'+f1(pct(s.c2,s.total))+'%</td>'
+      + '<td data-h="3 科以上 C">'+f1(pct(s.c3,s.total))+'%</td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+document.querySelectorAll('.sortbtn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.sortbtn').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+    btn.setAttribute('aria-pressed','true');
+    renderTable(btn.getAttribute('data-key'));
+  });
+});
+
+/* ---- single-school explorer ---- */
+var sel = document.getElementById('sch-select');
+DATA.forEach(function(s,i){
+  var o=document.createElement('option'); o.value=i;
+  o.textContent = (i>=24 ? s.name : s.name+'（'+num(s.total)+' 人）');
+  sel.appendChild(o);
+});
+sel.value = 24; /* 全區 */
+var NS='http://www.w3.org/2000/svg';
+function el(tag, attrs, text){
+  var e=document.createElementNS(NS,tag);
+  for(var k in attrs) e.setAttribute(k, attrs[k]);
+  if(text!=null) e.textContent=text;
+  return e;
+}
+function renderExplorer(){
+  var s = DATA[parseInt(sel.value,10)];
+  document.getElementById('exp-chips').innerHTML =
+    '<span>考生 <b>'+num(s.total)+' 人</b></span>'
+    + '<span>平均積分 <b>'+s.avg.toFixed(2)+' 分</b></span>'
+    + '<span>5A <b>'+num(s.fiveA)+' 人 · '+f1(pct(s.fiveA,s.total))+'%</b></span>'
+    + '<span>無 C <b>'+f1(pct(s.noC,s.total))+'%</b></span>'
+    + '<span>3 科以上 C <b>'+f1(pct(s.c3,s.total))+'%</b></span>';
+  var maxp=0; s.nums.forEach(function(n){ maxp=Math.max(maxp, pct(n,s.total)); });
+  var dom = Math.max(25, Math.ceil(maxp/10)*10);
+  var W=1040, x0=168, plotW=600, barH=15, gapIn=4, groupH=barH, pitch=groupH+13, top=44;
+  var Hh = top + pitch*21 + 6;
+  function X(v){ return x0 + v/dom*plotW; }
+  var svg = el('svg',{viewBox:'0 0 '+W+' '+Hh, 'class':'chart', role:'img', 'aria-label':s.name+'各能力等級組合人數分布圖'});
+  var step = dom>40 ? 10 : 5;
+  for(var t=0;t<=dom;t+=step){
+    svg.appendChild(el('line',{x1:X(t),y1:top-18,x2:X(t),y2:Hh-4,'class':'grid'}));
+    svg.appendChild(el('text',{x:X(t),y:top-24,'class':'axis-lab','text-anchor':'middle'}, t+'%'));
+  }
+  LABELS.forEach(function(lab,i){
+    var y=top+i*pitch, n=s.nums[i], v=pct(n,s.total);
+    svg.appendChild(el('text',{x:x0-14,y:y+12,'class':'combo-lab','text-anchor':'end'}, lab));
+    svg.appendChild(el('text',{x:x0-14,y:y+27,'class':'combo-sub','text-anchor':'end'}, SCORES[i]+' 分'));
+    svg.appendChild(el('rect',{x:x0,y:y,width:Math.max(0,X(v)-x0),height:barH,rx:3,'class':'bar-region'}));
+    svg.appendChild(el('text',{x:X(v)+8,y:y+12,'class':'val-lab'}, f1(v)+'% · '+num(n)+' 人 · 累計 '+f1(pct(s.cum[i],s.total))+'%'));
+  });
+  var box=document.getElementById('exp-chart'); box.innerHTML=''; box.appendChild(svg);
+}
+sel.addEventListener('change', renderExplorer);
+renderExplorer();
+
+</script>
+</body>
+</html>
