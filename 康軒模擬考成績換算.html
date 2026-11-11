@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>康軒模擬考成績換算</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+:root{
+--bg:#f4f6f5;
+--surface:#ffffff;
+--surface-2:#eef2f0;
+--ink:#1c2b26;
+--ink-2:#4a5d56;
+--ink-3:#71837c;
+--line:#d8e0dc;
+--accent:#0b6e4f;
+--accent-ink:#ffffff;
+--accent-soft:#e0f0e9;
+--warn:#b45309;
+--error:#b3261e;
+--error-bg:#fdecea;
+--app:#0b6e4f; --app-bg:#dff2e8;
+--ap:#2e8b62; --ap-bg:#e3f3ea;
+--a:#5da271; --a-bg:#eaf4ec;
+--bpp:#9a6a00; --bpp-bg:#fdf0d3;
+--bp:#b07d10; --bp-bg:#fdf3da;
+--b:#c08f1d; --b-bg:#fdf6e0;
+--c:#8a4b42; --c-bg:#f6e7e4;
+--shadow:0 1px 2px rgba(20,40,33,.06),0 4px 14px rgba(20,40,33,.05);
+--radius:14px;
+}
+@media (prefers-color-scheme: dark){
+:root{
+--bg:#121816;
+--surface:#1b2320;
+--surface-2:#232d29;
+--ink:#e8efec;
+--ink-2:#b3c2bb;
+--ink-3:#84968e;
+--line:#33413b;
+--accent:#3cb68c;
+--accent-ink:#0d1512;
+--accent-soft:#1d322a;
+--warn:#e5a44b;
+--error:#f0938c;
+--error-bg:#3a2321;
+--app:#4cc79a; --app-bg:#173a2d;
+--ap:#45b586; --ap-bg:#1a3529;
+--a:#5da271; --a-bg:#1e2f24;
+--bpp:#e0aa3e; --bpp-bg:#38300f;
+--bp:#d29c2b; --bp-bg:#332b10;
+--b:#c49a35; --b-bg:#2f2a12;
+--c:#d08a7d; --c-bg:#382622;
+--shadow:0 1px 2px rgba(0,0,0,.35),0 4px 14px rgba(0,0,0,.25);
+}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+margin:0;background:var(--bg);color:var(--ink);
+font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+font-size:16px;line-height:1.55;
+}
+button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.75rem}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px 56px}
+
+/* ---------- header ---------- */
+header.page{padding:26px 0 6px}
+header.page h1{font-size:clamp(24px,5.4vw,34px);font-weight:900;line-height:1.25;margin:0 0 8px;letter-spacing:.01em}
+header.page .sub{color:var(--ink-2);margin:0;font-size:15px}
+header.page .sub b{color:var(--ink)}
+.howto{
+margin-top:14px;background:var(--accent-soft);border-radius:var(--radius);
+padding:12px 16px;font-size:14.5px;color:var(--ink);
+}
+.howto b{color:var(--accent)}
+
+/* ---------- sticky summary strip ---------- */
+.strip{
+position:sticky;top:0;z-index:20;margin:16px -16px 0;padding:10px 16px;
+background:var(--bg);border-bottom:1px solid var(--line);
+display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.strip .chip{
+display:inline-flex;align-items:center;gap:6px;background:var(--surface);
+border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;
+font-size:14px;font-weight:700;min-height:36px;
+}
+.strip .chip .sname{
+display:inline-flex;align-items:center;justify-content:center;
+width:24px;height:24px;border-radius:50%;background:var(--surface-2);
+font-size:13px;font-weight:900;color:var(--ink-2);flex:none;
+}
+.strip .chip .g{font-weight:900;font-variant-numeric:tabular-nums}
+.strip .chip .g.empty{color:var(--ink-3);font-weight:500}
+.strip .pts{margin-left:auto;font-size:14px;color:var(--ink-2);white-space:nowrap}
+.strip .pts b{color:var(--ink);font-size:17px;font-variant-numeric:tabular-nums}
+
+/* ---------- subject cards ---------- */
+.grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+@media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+.card{
+background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:18px;
+}
+.card.wide{grid-column:1/-1}
+@media (min-width:760px){.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.card-head .badge{
+width:40px;height:40px;border-radius:10px;flex:none;
+display:flex;align-items:center;justify-content:center;
+font-size:19px;font-weight:900;color:var(--accent-ink);background:var(--accent);
+}
+.card-head h2{font-size:19px;font-weight:900;margin:0}
+.card-head .total{margin-left:auto;color:var(--ink-3);font-size:13.5px;text-align:right}
+.card-head .method{font-size:13px;color:var(--ink-2)}
+.field{margin-top:14px}
+.field label.flabel{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
+.seg button{
+border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:14px;font-weight:700;
+padding:6px 16px;border-radius:8px;cursor:pointer;min-height:40px;
+}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.countrow{display:flex;align-items:stretch;gap:8px;margin-top:10px}
+.stepper{
+width:52px;flex:none;border:1px solid var(--line);background:var(--surface-2);
+border-radius:10px;font-size:22px;font-weight:700;color:var(--ink);cursor:pointer;
+display:flex;align-items:center;justify-content:center;min-height:52px;
+}
+.stepper:active{background:var(--accent-soft)}
+.countrow input{
+flex:1;min-width:0;text-align:center;font:inherit;font-size:26px;font-weight:900;
+font-variant-numeric:tabular-nums;color:var(--ink);
+background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:6px 4px;
+}
+.countrow input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.countrow input.invalid{border-color:var(--error)}
+.complement{margin-top:8px;font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums;min-height:22px}
+.complement b{color:var(--ink)}
+.ferr{display:none;margin-top:6px;font-size:13.5px;color:var(--error);background:var(--error-bg);border-radius:8px;padding:7px 10px}
+.ferr.show{display:block}
+.score-input{max-width:220px}
+.score-input input{font-size:22px}
+
+.result{
+margin-top:16px;border-top:1px dashed var(--line);padding-top:14px;
+display:flex;align-items:center;gap:14px;min-height:74px;
+}
+.grade-badge{
+flex:none;min-width:86px;text-align:center;border-radius:12px;padding:10px 12px;
+font-size:30px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;
+}
+.grade-badge small{display:block;font-size:13px;font-weight:700;margin-top:3px}
+.grade-badge.none{background:var(--surface-2);color:var(--ink-3);font-size:16px;font-weight:500;padding:16px 12px}
+.g-Aplus2{background:var(--app-bg);color:var(--app)}
+.g-Aplus{background:var(--ap-bg);color:var(--ap)}
+.g-A{background:var(--a-bg);color:var(--a)}
+.g-Bplus2{background:var(--bpp-bg);color:var(--bpp)}
+.g-Bplus{background:var(--bp-bg);color:var(--bp)}
+.g-B{background:var(--b-bg);color:var(--b)}
+.g-C{background:var(--c-bg);color:var(--c)}
+.result .rmeta{font-size:14px;color:var(--ink-2);min-width:0}
+.result .rmeta .big{font-size:16.5px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.result .rmeta .hint{margin-top:2px}
+.result .rmeta .hint b{color:var(--accent)}
+.formula-line{
+margin-top:12px;background:var(--surface-2);border-radius:10px;padding:10px 12px;
+font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums;line-height:1.7;
+}
+.formula-line b{color:var(--ink)}
+.subgrades{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.subgrade{
+font-size:13.5px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;color:var(--ink-2);
+}
+.subgrade b{color:var(--ink);font-weight:900}
+
+/* ---------- summary ---------- */
+.summary{margin-top:20px}
+.summary h2,.refsec h2{font-size:20px;font-weight:900;margin:0 0 6px}
+.summary .lead{color:var(--ink-2);font-size:14.5px;margin:0 0 14px}
+.sum-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--surface-2);border-radius:12px;padding:14px;text-align:center}
+.stat .v{font-size:27px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .v small{font-size:15px;color:var(--ink-2);font-weight:700}
+.stat .k{font-size:13.5px;color:var(--ink-2);margin-top:3px}
+.combo-line{margin-top:14px;font-size:15.5px;font-variant-numeric:tabular-nums}
+.combo-line b{font-weight:900}
+.seq-line{margin-top:8px;font-size:14.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.seq-line b{color:var(--ink)}
+.writing-row{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.writing-row label{font-size:14.5px;font-weight:700}
+.writing-row select{
+font:inherit;font-size:16px;font-weight:700;color:var(--ink);
+background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;min-height:44px;
+}
+.writing-row .note{font-size:13.5px;color:var(--ink-3)}
+.rules{margin:16px 0 0;padding-left:20px;font-size:14px;color:var(--ink-2)}
+.rules li{margin:4px 0}
+.rules b{color:var(--ink)}
+.actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+font:inherit;font-size:15px;font-weight:700;cursor:pointer;border-radius:10px;
+padding:10px 20px;min-height:46px;border:1px solid var(--line);
+background:var(--surface);color:var(--ink);
+}
+.btn:active{background:var(--surface-2)}
+
+/* ---------- reference ---------- */
+.refsec{margin-top:34px}
+.refsec .lead{color:var(--ink-2);font-size:14.5px;margin:0 0 14px}
+.refgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(186px,1fr));gap:12px}
+.refcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.refcard h3{margin:0 0 10px;font-size:16px;font-weight:900}
+.refcard h3 span{color:var(--ink-3);font-size:12.5px;font-weight:500;margin-left:6px}
+.refrow{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.refrow:first-of-type{border-top:0}
+.refrow .rg{font-weight:900;font-size:15px}
+.refrow .rr{font-size:13.5px;color:var(--ink-2)}
+.notes{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.notes h2{font-size:17px;font-weight:900;margin:0 0 8px}
+.notes ul{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2)}
+.notes li{margin:5px 0}
+.notes .fx{color:var(--ink);font-weight:700}
+footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="page">
+<h1>康軒模擬考成績換算</h1>
+<p class="sub">115 學年・輸入答對或答錯題數，<b>即時換算</b>五科等級標示（A++～C）與高雄區比序積點。</p>
+<div class="howto">用法：每科可切換填「<b>答對</b>」或「<b>答錯</b>」題數；數學另填非選得分、英語分閱讀與聽力填寫。數字一輸入，下方標示與上方總覽就會自動更新，不用按送出。</div>
+</header>
+
+<!-- 即時總覽 -->
+<div class="strip" aria-live="polite" aria-label="五科等級標示總覽">
+<span class="chip"><span class="sname">國</span><span class="g empty" id="chip-zh">尚未輸入</span></span>
+<span class="chip"><span class="sname">社</span><span class="g empty" id="chip-soc">尚未輸入</span></span>
+<span class="chip"><span class="sname">自</span><span class="g empty" id="chip-nat">尚未輸入</span></span>
+<span class="chip"><span class="sname">數</span><span class="g empty" id="chip-math">尚未輸入</span></span>
+<span class="chip"><span class="sname">英</span><span class="g empty" id="chip-eng">尚未輸入</span></span>
+<span class="pts" id="strip-pts">總積點 <b>—</b> / 35</span>
+</div>
+
+<div class="grid">
+<!-- 國文 -->
+<section class="card" aria-labelledby="h-zh">
+<div class="card-head">
+<span class="badge">國</span>
+<div><h2 id="h-zh">國文</h2><div class="method">以答對題數判定</div></div>
+<div class="total">共 42 題</div>
+</div>
+<div class="field">
+<span class="flabel" id="lb-zh">輸入題數</span>
+<div class="seg" role="group" aria-label="國文輸入方式">
+<button type="button" data-mode-btn="zh:right" aria-pressed="true">答對題數</button>
+<button type="button" data-mode-btn="zh:wrong" aria-pressed="false">答錯題數</button>
+</div>
+<div class="countrow">
+<button type="button" class="stepper" data-step="zh:-1" aria-label="國文題數減一">−</button>
+<input id="in-zh" type="number" inputmode="numeric" min="0" max="42" step="1" placeholder="0" aria-labelledby="lb-zh" />
+<button type="button" class="stepper" data-step="zh:1" aria-label="國文題數加一">＋</button>
+</div>
+<div class="complement" id="comp-zh"></div>
+<div class="ferr" id="err-zh" role="alert"></div>
+</div>
+<div class="result" id="res-zh"></div>
+</section>
+
+<!-- 社會 -->
+<section class="card" aria-labelledby="h-soc">
+<div class="card-head">
+<span class="badge">社</span>
+<div><h2 id="h-soc">社會</h2><div class="method">以答對題數判定</div></div>
+<div class="total">共 54 題</div>
+</div>
+<div class="field">
+<span class="flabel" id="lb-soc">輸入題數</span>
+<div class="seg" role="group" aria-label="社會輸入方式">
+<button type="button" data-mode-btn="soc:right" aria-pressed="true">答對題數</button>
+<button type="button" data-mode-btn="soc:wrong" aria-pressed="false">答錯題數</button>
+</div>
+<div class="countrow">
+<button type="button" class="stepper" data-step="soc:-1" aria-label="社會題數減一">−</button>
+<input id="in-soc" type="number" inputmode="numeric" min="0" max="54" step="1" placeholder="0" aria-labelledby="lb-soc" />
+<button type="button" class="stepper" data-step="soc:1" aria-label="社會題數加一">＋</button>
+</div>
+<div class="complement" id="comp-soc"></div>
+<div class="ferr" id="err-soc" role="alert"></div>
+</div>
+<div class="result" id="res-soc"></div>
+</section>
+
+<!-- 自然 -->
+<section class="card" aria-labelledby="h-nat">
+<div class="card-head">
+<span class="badge">自</span>
+<div><h2 id="h-nat">自然</h2><div class="method">以答對題數判定</div></div>
+<div class="total">共 50 題</div>
+</div>
+<div class="field">
+<span class="flabel" id="lb-nat">輸入題數</span>
+<div class="seg" role="group" aria-label="自然輸入方式">
+<button type="button" data-mode-btn="nat:right" aria-pressed="true">答對題數</button>
+<button type="button" data-mode-btn="nat:wrong" aria-pressed="false">答錯題數</button>
+</div>
+<div class="countrow">
+<button type="button" class="stepper" data-step="nat:-1" aria-label="自然題數減一">−</button>
+<input id="in-nat" type="number" inputmode="numeric" min="0" max="50" step="1" placeholder="0" aria-labelledby="lb-nat" />
+<button type="button" class="stepper" data-step="nat:1" aria-label="自然題數加一">＋</button>
+</div>
+<div class="complement" id="comp-nat"></div>
+<div class="ferr" id="err-nat" role="alert"></div>
+</div>
+<div class="result" id="res-nat"></div>
+</section>
+
+<!-- 數學 -->
+<section class="card" aria-labelledby="h-math">
+<div class="card-head">
+<span class="badge">數</span>
+<div><h2 id="h-math">數學</h2><div class="method">先算加權分數，再判定標示</div></div>
+<div class="total">選擇共 <span id="math-total-label">25</span> 題<br />非選滿分 <span id="math-non-label">6</span> 分</div>
+</div>
+<div class="field">
+<span class="flabel" id="lb-math">選擇題</span>
+<div class="seg" role="group" aria-label="數學選擇題輸入方式">
+<button type="button" data-mode-btn="math:right" aria-pressed="true">答對題數</button>
+<button type="button" data-mode-btn="math:wrong" aria-pressed="false">答錯題數</button>
+</div>
+<div class="countrow">
+<button type="button" class="stepper" data-step="math:-1" aria-label="數學選擇題數減一">−</button>
+<input id="in-math" type="number" inputmode="numeric" min="0" max="25" step="1" placeholder="0" aria-labelledby="lb-math" />
+<button type="button" class="stepper" data-step="math:1" aria-label="數學選擇題數加一">＋</button>
+</div>
+<div class="complement" id="comp-math"></div>
+<div class="ferr" id="err-math" role="alert"></div>
+</div>
+<div class="field">
+<label class="flabel" for="in-math-non">非選得分（0～<span class="non-max-label">6</span> 分，整數）</label>
+<div class="countrow score-input">
+<button type="button" class="stepper" data-step="mathNon:-1" aria-label="非選得分減一分">−</button>
+<input id="in-math-non" type="number" inputmode="numeric" min="0" max="6" step="1" placeholder="0" />
+<button type="button" class="stepper" data-step="mathNon:1" aria-label="非選得分加一分">＋</button>
+</div>
+<div class="ferr" id="err-mathNon" role="alert"></div>
+</div>
+<div class="formula-line" id="math-formula">加權分數 ＝ 選擇答對 ÷ 選擇總題數 × 85 ＋ 非選得分 ÷ 非選總分 × 15（四捨五入至小數第二位）</div>
+<div class="result" id="res-math"></div>
+</section>
+
+<!-- 英語 -->
+<section class="card wide" aria-labelledby="h-eng">
+<div class="card-head">
+<span class="badge">英</span>
+<div><h2 id="h-eng">英語</h2><div class="method">閱讀與聽力先算加權分數，再判定整科標示</div></div>
+<div class="total">閱讀共 43 題・聽力共 21 題</div>
+</div>
+<div class="two-col">
+<div class="field">
+<span class="flabel" id="lb-engR">閱讀測驗</span>
+<div class="seg" role="group" aria-label="英語閱讀輸入方式">
+<button type="button" data-mode-btn="engR:right" aria-pressed="true">答對題數</button>
+<button type="button" data-mode-btn="engR:wrong" aria-pressed="false">答錯題數</button>
+</div>
+<div class="countrow">
+<button type="button" class="stepper" data-step="engR:-1" aria-label="閱讀題數減一">−</button>
+<input id="in-engR" type="number" inputmode="numeric" min="0" max="43" step="1" placeholder="0" aria-labelledby="lb-engR" />
+<button type="button" class="stepper" data-step="engR:1" aria-label="閱讀題數加一">＋</button>
+</div>
+<div class="complement" id="comp-engR"></div>
+<div class="ferr" id="err-engR" role="alert"></div>
+</div>
+<div class="field">
+<span class="flabel" id="lb-engL">聽力測驗</span>
+<div class="seg" role="group" aria-label="英語聽力輸入方式">
+<button type="button" data-mode-btn="engL:right" aria-pressed="true">答對題數</button>
+<button type="button" data-mode-btn="engL:wrong" aria-pressed="false">答錯題數</button>
+</div>
+<div class="countrow">
+<button type="button" class="stepper" data-step="engL:-1" aria-label="聽力題數減一">−</button>
+<input id="in-engL" type="number" inputmode="numeric" min="0" max="21" step="1" placeholder="0" aria-labelledby="lb-engL" />
+<button type="button" class="stepper" data-step="engL:1" aria-label="聽力題數加一">＋</button>
+</div>
+<div class="complement" id="comp-engL"></div>
+<div class="ferr" id="err-engL" role="alert"></div>
+</div>
+</div>
+<div class="formula-line" id="eng-formula">加權分數 ＝ 閱讀答對 ÷ 43 × 80 ＋ 聽力答對 ÷ 21 × 20（四捨五入至小數第二位）</div>
+<div class="subgrades" id="eng-subgrades"></div>
+<div class="result" id="res-eng"></div>
+</section>
+</div>
+
+<!-- 總結 -->
+<section class="card summary" aria-labelledby="h-sum">
+<h2 id="h-sum">五科總結與高雄區比序</h2>
+<p class="lead">五科都輸入後，這裡會依說明文件第 2 頁的高雄區比序規則，算出三等級總分與等級標示總積點。</p>
+<div class="sum-stats">
+<div class="stat"><div class="v" id="sum-combo">—</div><div class="k">五科組合（精熟 A・基礎 B・待加強 C）</div></div>
+<div class="stat"><div class="v" id="sum-points">—<small> / 35 點</small></div><div class="k">規則 2：等級標示總積點</div></div>
+<div class="stat"><div class="v" id="sum-level">—<small> / 30 分</small></div><div class="k">規則 1：三等級總分</div></div>
+</div>
+<div class="combo-line" id="sum-detail"></div>
+<div class="seq-line" id="sum-seq"></div>
+<div class="writing-row">
+<label for="in-writing">寫作測驗（選填）</label>
+<select id="in-writing">
+<option value="">未輸入</option>
+<option value="6">6 級分</option>
+<option value="5">5 級分</option>
+<option value="4">4 級分</option>
+<option value="3">3 級分</option>
+<option value="2">2 級分</option>
+<option value="1">1 級分</option>
+<option value="0">0 級分</option>
+</select>
+<span class="note" id="writing-note">比序規則 5 才會用到；模擬考區排不採計寫作，僅校排與班排採計。</span>
+</div>
+<ul class="rules">
+<li><b>規則 1</b> 三等級總分：精熟 6 分、基礎 4 分、待加強 2 分，五科滿分 30 分。</li>
+<li><b>規則 2</b> 等級標示總積點：A++ 7 點、A+ 6 點、A 5 點、B++ 4 點、B+ 3 點、B 2 點、C 1 點，五科滿分 35 點。</li>
+<li><b>規則 3、4</b> 單科依序比較：國 → 數 → 英 → 社 → 自（先比三等級積分，再比單科標示）。</li>
+<li><b>規則 5</b> 寫作測驗級分（滿分 6 級分）。</li>
+</ul>
+<div class="actions">
+<button type="button" class="btn" id="btn-clear">全部清除，重新輸入</button>
+</div>
+</section>
+
+<!-- 對照表 -->
+<section class="refsec" aria-labelledby="h-ref">
+<h2 id="h-ref">五科等級標示對照表</h2>
+<p class="lead">出自說明文件〈五科等級標示與答對題數、加權分數對照表〉，換算結果以此為準。</p>
+<div class="refgrid" id="refgrid"></div>
+
+<div class="notes">
+<h2>計分公式與說明</h2>
+<ul>
+<li><span class="fx">數學加權分數</span> ＝ 選擇答對題數 ÷ 選擇總題數 × 85 ＋ 非選得分 ÷ 非選總分 × 15，四捨五入至小數第二位。</li>
+<li><span class="fx">英語加權分數</span> ＝ 閱讀答對題數 ÷ 43 × 80 ＋ 聽力答對題數 ÷ 21 × 20，四捨五入至小數第二位。英語整科標示以加權分數為準；閱讀、聽力各自的能力等級（精熟／基礎／待加強、基礎以上／待加強）僅供參考。</li>
+<li>英語閱讀能力等級：精熟 40–43 題、基礎 18–39 題、待加強 0–17 題；聽力能力等級：基礎以上 13–21 題、待加強 0–12 題。</li>
+<li>說明文件的公式未印出數學的總題數數字；本頁依教育會考格式預設<b>選擇 25 題、非選總分 6 分</b>（加權門檻 91.60 分恰與「選擇 24 題＋非選 4 分」吻合）。若本次模擬考題數不同，可在下方調整，公式會立即重算；國、社、自與英語的總題數則直接取自對照表（42、54、50、閱讀 43、聽力 21）。</li>
+</ul>
+<div class="writing-row" style="margin-top:14px">
+<label for="set-math-total">數學選擇總題數</label>
+<input id="set-math-total" type="number" inputmode="numeric" min="1" max="60" step="1" value="25" style="width:84px;font:inherit;font-weight:700;text-align:center;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);min-height:44px" />
+<label for="set-math-non">非選總分</label>
+<input id="set-math-non" type="number" inputmode="numeric" min="1" max="30" step="1" value="6" style="width:84px;font:inherit;font-weight:700;text-align:center;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);min-height:44px" />
+</div>
+</div>
+<footer class="src">資料來源：115 學年成績處理說明（康軒文教）。本頁為試算工具，正式成績以學校或康軒公告為準。</footer>
+</section>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id);};
+
+/* ---------- 對照表資料（出自說明文件） ---------- */
+// bands: 由高到低，min 為該標示的下限（答對題數或加權分數）
+var COUNT_SUBJECTS = {
+zh: { name:"國文", total:42, bands:[[39,"A++"],[38,"A+"],[35,"A"],[31,"B++"],[27,"B+"],[17,"B"],[0,"C"]]},
+soc: { name:"社會", total:54, bands:[[51,"A++"],[50,"A+"],[47,"A"],[41,"B++"],[35,"B+"],[22,"B"],[0,"C"]]},
+nat: { name:"自然", total:50, bands:[[48,"A++"],[47,"A+"],[44,"A"],[37,"B++"],[30,"B+"],[19,"B"],[0,"C"]]}
+};
+var MATH_BANDS = [[91.60,"A++"],[86.60,"A+"],[78.20,"A"],[69.60,"B++"],[59.40,"B+"],[39.70,"B"],[0,"C"]];
+var ENG_BANDS = [[98.14,"A++"],[96.28,"A+"],[92.38,"A"],[86.93,"B++"],[77.50,"B+"],[45.91,"B"],[0,"C"]];
+var ENG_READ_TOTAL = 43, ENG_LIST_TOTAL = 21;
+
+var POINTS = {"A++":7,"A+":6,"A":5,"B++":4,"B+":3,"B":2,"C":1};
+var GRADE_CLASS = {"A++":"g-Aplus2","A+":"g-Aplus","A":"g-A","B++":"g-Bplus2","B+":"g-Bplus","B":"g-B","C":"g-C"};
+function levelOf(g){ return g.charAt(0)==="A"? "精熟": (g.charAt(0)==="B"? "基礎": "待加強");}
+function levelScore(g){ return g.charAt(0)==="A"? 6: (g.charAt(0)==="B"? 4: 2);}
+function round2(x){ return Math.round((x + 1e-9) * 100) / 100;}
+function fmt2(x){ return round2(x).toFixed(2);}
+
+function gradeFromBands(value, bands){
+for (var i=0;i<bands.length;i++){ if (value >= bands[i][0]) return { grade:bands[i][1], idx:i};}
+return { grade:"C", idx:bands.length-1};
+}
+function bandRangeText(bands, idx, isScore, maxVal){
+var lo = bands[idx][0];
+var hi = (idx===0)? maxVal: (isScore? round2(bands[idx-1][0]-0.01): bands[idx-1][0]-1);
+if (isScore) return fmt2(lo) + "–" + fmt2(hi) + " 分";
+return lo + "–" + hi + " 題";
+}
+
+/* ---------- 輸入狀態 ---------- */
+// mode: 'right' 填答對 / 'wrong' 填答錯
+var modes = { zh:"right", soc:"right", nat:"right", math:"right", engR:"right", engL:"right"};
+var totals = { zh:42, soc:54, nat:50, engR:ENG_READ_TOTAL, engL:ENG_LIST_TOTAL};
+function mathChoiceTotal(){ var v = parseInt($("set-math-total").value,10); return (isFinite(v)&&v>0)? v: 25;}
+function mathNonTotal(){ var v = parseInt($("set-math-non").value,10); return (isFinite(v)&&v>0)? v: 6;}
+function totalOf(key){ return key==="math"? mathChoiceTotal(): totals[key];}
+
+function readField(key){
+var el = $("in-"+key);
+var total = totalOf(key);
+var errEl = $("err-"+key), compEl = $("comp-"+key);
+var raw = el.value.trim();
+errEl.className = "ferr"; errEl.textContent = "";
+el.classList.remove("invalid");
+if (raw === ""){ if (compEl) compEl.textContent = ""; return { state:"empty"};}
+var v = Number(raw);
+if (!isFinite(v) || Math.floor(v)!==v){
+errEl.textContent = "請輸入整數題數。"; errEl.classList.add("show"); el.classList.add("invalid");
+if (compEl) compEl.textContent = ""; return { state:"invalid"};
+}
+if (v < 0 || v > total){
+errEl.textContent = "題數要在 0～" + total + " 題之間。"; errEl.classList.add("show"); el.classList.add("invalid");
+if (compEl) compEl.textContent = ""; return { state:"invalid"};
+}
+var correct = (modes[key]==="right")? v: total - v;
+var wrong = total - correct;
+if (compEl) compEl.innerHTML = "答對 <b>" + correct + "</b> 題・答錯 <b>" + wrong + "</b> 題（共 " + total + " 題）";
+return { state:"ok", correct:correct, wrong:wrong, total:total};
+}
+
+function emptyResult(el, msg){
+el.innerHTML = '<div class="grade-badge none">等級標示</div><div class="rmeta">' + msg + '</div>';
+}
+function gradeResultHTML(grade, mainLine, hintLine){
+return '<div class="grade-badge ' + GRADE_CLASS[grade] + '">' + grade + '<small>' + levelOf(grade) + '</small></div>' +
+'<div class="rmeta"><div class="big">' + mainLine + '</div><div class="hint">' + hintLine + '</div></div>';
+}
+
+/* ---------- 各科結果 ---------- */
+var finalGrades = { zh:null, soc:null, nat:null, math:null, eng:null};
+
+function renderCountSubject(key){
+var cfg = COUNT_SUBJECTS[key];
+var f = readField(key);
+var resEl = $("res-"+key);
+if (f.state!== "ok"){ finalGrades[key]=null; emptyResult(resEl, f.state==="invalid"? "題數有誤，修正後會自動換算。": "輸入答對或答錯題數後，這裡會顯示等級標示。"); return;}
+var r = gradeFromBands(f.correct, cfg.bands);
+finalGrades[key] = r.grade;
+var main = "答對 " + f.correct + " 題・本標示範圍 " + bandRangeText(cfg.bands, r.idx, false, cfg.total);
+var hint;
+if (r.idx === 0) hint = "已是最高標示，漂亮！";
+else {
+var need = cfg.bands[r.idx-1][0] - f.correct;
+hint = "再答對 <b>" + need + "</b> 題可達 <b>" + cfg.bands[r.idx-1][1] + "</b>（" + levelOf(cfg.bands[r.idx-1][1]) + "）";
+}
+resEl.innerHTML = gradeResultHTML(r.grade, main, hint);
+}
+
+function renderMath(){
+var f = readField("math");
+var nonEl = $("in-math-non"), nonErr = $("err-mathNon");
+var nonTotal = mathNonTotal();
+nonErr.className = "ferr"; nonErr.textContent = ""; nonEl.classList.remove("invalid");
+var nonRaw = nonEl.value.trim();
+var non = null, nonInvalid = false;
+if (nonRaw!== ""){
+non = Number(nonRaw);
+if (!isFinite(non) || Math.floor(non)!==non){
+nonErr.textContent = "非選得分只能填整數分，沒有 0.5 分。"; nonErr.classList.add("show"); nonEl.classList.add("invalid"); nonInvalid = true;
+} else if (non < 0 || non > nonTotal){
+nonErr.textContent = "非選得分要在 0～" + nonTotal + " 分之間。"; nonErr.classList.add("show"); nonEl.classList.add("invalid"); nonInvalid = true;
+}
+}
+var resEl = $("res-math");
+if (f.state!== "ok" || nonInvalid || non === null){
+finalGrades.math = null;
+if (f.state === "ok" &&!nonInvalid && non === null){
+$("math-formula").innerHTML = "選擇答對 <b>" + f.correct + "</b> 題；再填入非選得分，就能算出加權分數。";
+emptyResult(resEl, "還差非選得分：填入後會自動算出加權分數與標示。");
+} else {
+$("math-formula").innerHTML = "加權分數 ＝ 選擇答對 ÷ " + mathChoiceTotal() + " × 85 ＋ 非選得分 ÷ " + nonTotal + " × 15（四捨五入至小數第二位）";
+emptyResult(resEl, (f.state==="invalid"||nonInvalid)? "輸入有誤，修正後會自動換算。": "輸入選擇題答對（或答錯）題數與非選得分後，這裡會顯示加權分數與標示。");
+}
+return;
+}
+var cPart = f.correct / mathChoiceTotal() * 85;
+var nPart = non / nonTotal * 15;
+var w = round2(cPart + nPart);
+$("math-formula").innerHTML = "選擇：" + f.correct + " ÷ " + mathChoiceTotal() + " × 85 ＝ <b>" + fmt2(cPart) + "</b> 分<br />非選：" + non + " ÷ " + nonTotal + " × 15 ＝ <b>" + fmt2(nPart) + "</b> 分<br />加權分數 ＝ <b>" + fmt2(w) + "</b> 分";
+var r = gradeFromBands(w, MATH_BANDS);
+finalGrades.math = r.grade;
+var main = "加權分數 " + fmt2(w) + " 分・本標示範圍 " + bandRangeText(MATH_BANDS, r.idx, true, 100);
+var hint;
+if (r.idx === 0) hint = "已是最高標示，漂亮！";
+else hint = "加權分數再 <b>+" + fmt2(MATH_BANDS[r.idx-1][0] - w) + "</b> 分可達 <b>" + MATH_BANDS[r.idx-1][1] + "</b>（" + levelOf(MATH_BANDS[r.idx-1][1]) + "）";
+resEl.innerHTML = gradeResultHTML(r.grade, main, hint);
+}
+
+function renderEngSubGrades(fr, fl){
+var box = $("eng-subgrades");
+if (fr.state!== "ok" && fl.state!== "ok"){ box.innerHTML = ""; return;}
+var html = "";
+if (fr.state === "ok"){
+var rl = fr.correct >= 40? "精熟": (fr.correct >= 18? "基礎": "待加強");
+html += '<span class="subgrade">閱讀能力等級：<b>' + rl + '</b>（答對 ' + fr.correct + ' 題）</span>';
+}
+if (fl.state === "ok"){
+var ll = fl.correct >= 13? "基礎以上": "待加強";
+html += '<span class="subgrade">聽力能力等級：<b>' + ll + '</b>（答對 ' + fl.correct + ' 題）</span>';
+}
+box.innerHTML = html;
+}
+
+function renderEng(){
+var fr = readField("engR"), fl = readField("engL");
+renderEngSubGrades(fr, fl);
+var resEl = $("res-eng");
+if (fr.state!== "ok" || fl.state!== "ok"){
+finalGrades.eng = null;
+if (fr.state === "invalid" || fl.state === "invalid") emptyResult(resEl, "題數有誤，修正後會自動換算。");
+else if (fr.state === "ok" || fl.state === "ok") emptyResult(resEl, "閱讀與聽力都填好後，會自動算出英語加權分數與整科標示。");
+else emptyResult(resEl, "輸入閱讀與聽力的答對（或答錯）題數後，這裡會顯示加權分數與標示。");
+$("eng-formula").innerHTML = "加權分數 ＝ 閱讀答對 ÷ 43 × 80 ＋ 聽力答對 ÷ 21 × 20（四捨五入至小數第二位）";
+return;
+}
+var rPart = fr.correct / ENG_READ_TOTAL * 80;
+var lPart = fl.correct / ENG_LIST_TOTAL * 20;
+var w = round2(rPart + lPart);
+$("eng-formula").innerHTML = "閱讀：" + fr.correct + " ÷ 43 × 80 ＝ <b>" + fmt2(rPart) + "</b> 分・聽力：" + fl.correct + " ÷ 21 × 20 ＝ <b>" + fmt2(lPart) + "</b> 分・加權分數 ＝ <b>" + fmt2(w) + "</b> 分";
+var r = gradeFromBands(w, ENG_BANDS);
+finalGrades.eng = r.grade;
+var main = "加權分數 " + fmt2(w) + " 分・本標示範圍 " + bandRangeText(ENG_BANDS, r.idx, true, 100);
+var hint;
+if (r.idx === 0) hint = "已是最高標示，漂亮！";
+else hint = "加權分數再 <b>+" + fmt2(ENG_BANDS[r.idx-1][0] - w) + "</b> 分可達 <b>" + ENG_BANDS[r.idx-1][1] + "</b>（" + levelOf(ENG_BANDS[r.idx-1][1]) + "）";
+resEl.innerHTML = gradeResultHTML(r.grade, main, hint);
+}
+
+/* ---------- 總結 ---------- */
+function renderSummary(){
+var order = ["zh","soc","nat","math","eng"];
+var names = { zh:"國文", soc:"社會", nat:"自然", math:"數學", eng:"英語"};
+for (var i=0;i<order.length;i++){
+var chip = $("chip-"+order[i]), g = finalGrades[order[i]];
+if (g){ chip.textContent = g; chip.className = "g";}
+else { chip.textContent = "尚未輸入"; chip.className = "g empty";}
+}
+var done = order.every(function(k){ return!!finalGrades[k];});
+var writing = $("in-writing").value;
+if (!done){
+var n = order.filter(function(k){ return!!finalGrades[k];}).length;
+$("strip-pts").innerHTML = "總積點 <b>—</b> / 35";
+$("sum-combo").textContent = "已完成 " + n + " / 5 科";
+$("sum-points").innerHTML = "—<small> / 35 點</small>";
+$("sum-level").innerHTML = "—<small> / 30 分</small>";
+$("sum-detail").textContent = "五科都輸入後，這裡會顯示各科標示明細。";
+$("sum-seq").textContent = "";
+return;
+}
+var pts = 0, lvl = 0, cA = 0, cB = 0, cC = 0;
+order.forEach(function(k){ var g = finalGrades[k]; pts += POINTS[g]; lvl += levelScore(g);
+if (g.charAt(0)==="A") cA++; else if (g.charAt(0)==="B") cB++; else cC++;});
+var combo = (cA? cA+"A":"") + (cB? cB+"B":"") + (cC? cC+"C":"");
+$("strip-pts").innerHTML = "總積點 <b>" + pts + "</b> / 35";
+$("sum-combo").textContent = combo;
+$("sum-points").innerHTML = pts + "<small> / 35 點</small>";
+$("sum-level").innerHTML = lvl + "<small> / 30 分</small>";
+var detail = order.map(function(k){ return names[k] + " " + finalGrades[k] + "（" + POINTS[finalGrades[k]] + " 點）";}).join("・");
+$("sum-detail").innerHTML = "<b>各科標示：</b>" + detail;
+var seqOrder = ["zh","math","eng","soc","nat"];
+var seqNames = { zh:"國", math:"數", eng:"英", soc:"社", nat:"自"};
+var seq = seqOrder.map(function(k){ return seqNames[k] + " " + finalGrades[k];}).join(" → ");
+var seqText = "<b>同分比序（規則 3、4）單科順序：</b>" + seq;
+if (writing!== "") seqText += "・<b>寫作（規則 5）：</b>" + writing + " 級分";
+$("sum-seq").innerHTML = seqText;
+}
+
+function renderAll(){
+renderCountSubject("zh"); renderCountSubject("soc"); renderCountSubject("nat");
+renderMath(); renderEng(); renderSummary();
+}
+
+/* ---------- 事件 ---------- */
+["zh","soc","nat","math","engR","engL"].forEach(function(key){
+$("in-"+key).addEventListener("input", renderAll);
+});
+$("in-math-non").addEventListener("input", renderAll);
+$("in-writing").addEventListener("change", renderSummary);
+$("set-math-total").addEventListener("input", function(){
+var t = mathChoiceTotal();
+$("in-math").max = t; $("math-total-label").textContent = t; renderAll();
+});
+$("set-math-non").addEventListener("input", function(){
+var t = mathNonTotal();
+$("in-math-non").max = t; $("math-non-label").textContent = t;
+document.querySelectorAll(".non-max-label").forEach(function(el){ el.textContent = t;});
+renderAll();
+});
+
+document.querySelectorAll("[data-mode-btn]").forEach(function(btn){
+btn.addEventListener("click", function(){
+var parts = btn.getAttribute("data-mode-btn").split(":");
+modes[parts[0]] = parts[1];
+document.querySelectorAll('[data-mode-btn^="' + parts[0] + ':"]').forEach(function(b){
+b.setAttribute("aria-pressed", b === btn? "true": "false");
+});
+renderAll();
+});
+});
+document.querySelectorAll("[data-step]").forEach(function(btn){
+btn.addEventListener("click", function(){
+var parts = btn.getAttribute("data-step").split(":");
+var key = parts[0], delta = parseFloat(parts[1]);
+var el = (key === "mathNon")? $("in-math-non"): $("in-"+key);
+var cur = el.value.trim() === ""? 0: Number(el.value);
+if (!isFinite(cur)) cur = 0;
+var max = (key === "mathNon")? mathNonTotal(): totalOf(key);
+var next = (key === "mathNon")? Math.round(cur + delta): Math.round((cur + delta) * 10) / 10;
+if (next < 0) next = 0; if (next > max) next = max;
+el.value = next;
+renderAll();
+});
+});
+$("btn-clear").addEventListener("click", function(){
+["zh","soc","nat","math","engR","engL","math-non"].forEach(function(k){ $("in-"+k).value = "";});
+$("in-writing").value = "";
+Object.keys(modes).forEach(function(k){ modes[k] = "right";});
+document.querySelectorAll("[data-mode-btn]").forEach(function(b){
+b.setAttribute("aria-pressed", b.getAttribute("data-mode-btn").split(":")[1] === "right"? "true": "false");
+});
+renderAll();
+$("in-zh").focus();
+});
+
+/* ---------- 對照表 ---------- */
+(function buildRef(){
+function rows(bands, isScore, maxVal){
+return bands.map(function(b, i){
+var range = bandRangeText(bands, i, isScore, maxVal);
+return '<div class="refrow"><span class="rg" style="color:var(--' + (b[1]==="A++"?"app":b[1]==="A+"?"ap":b[1]==="A"?"a":b[1]==="B++"?"bpp":b[1]==="B+"?"bp":b[1]==="B"?"b":"c") + ')">' + b[1] + " " + levelOf(b[1]) + '</span><span class="rr">' + range + "</span></div>";
+}).join("");
+}
+var html = "";
+html += '<div class="refcard"><h3>國文<span>答對題數・共 42 題</span></h3>' + rows(COUNT_SUBJECTS.zh.bands, false, 42) + "</div>";
+html += '<div class="refcard"><h3>社會<span>答對題數・共 54 題</span></h3>' + rows(COUNT_SUBJECTS.soc.bands, false, 54) + "</div>";
+html += '<div class="refcard"><h3>自然<span>答對題數・共 50 題</span></h3>' + rows(COUNT_SUBJECTS.nat.bands, false, 50) + "</div>";
+html += '<div class="refcard"><h3>數學<span>加權分數</span></h3>' + rows(MATH_BANDS, true, 100) + "</div>";
+html += '<div class="refcard"><h3>英語<span>加權分數</span></h3>' + rows(ENG_BANDS, true, 100) + "</div>";
+html += '<div class="refcard"><h3>英語分項<span>能力等級</span></h3>' +
+'<div class="refrow"><span class="rg">閱讀 精熟</span><span class="rr">40–43 題</span></div>' +
+'<div class="refrow"><span class="rg">閱讀 基礎</span><span class="rr">18–39 題</span></div>' +
+'<div class="refrow"><span class="rg">閱讀 待加強</span><span class="rr">0–17 題</span></div>' +
+'<div class="refrow"><span class="rg">聽力 基礎以上</span><span class="rr">13–21 題</span></div>' +
+'<div class="refrow"><span class="rg">聽力 待加強</span><span class="rr">0–12 題</span></div></div>';
+$("refgrid").innerHTML = html;
+})();
+
+renderAll();
+})();
+</script>
+</body>
+</html>
