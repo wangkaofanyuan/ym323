@@ -121,13 +121,8 @@ font-size:19px;font-weight:900;color:var(--accent-ink);background:var(--accent);
 .card-head .method{font-size:13px;color:var(--ink-2)}
 .field{margin-top:14px}
 .field label.flabel{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
-.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
-.seg button{
-border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:14px;font-weight:700;
-padding:6px 16px;border-radius:8px;cursor:pointer;min-height:40px;
-}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
-.countrow{display:flex;align-items:stretch;gap:8px;margin-top:10px}
+.field .flabel{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
+.countrow{display:flex;align-items:stretch;gap:8px;margin-top:6px}
 .stepper{
 width:52px;flex:none;border:1px solid var(--line);background:var(--surface-2);
 border-radius:10px;font-size:22px;font-weight:700;color:var(--ink);cursor:pointer;
@@ -234,8 +229,8 @@ footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
 <div class="wrap">
 <header class="page">
 <h1>康軒模擬考成績換算</h1>
-<p class="sub">115 學年・輸入答對或答錯題數，<b>即時換算</b>五科等級標示（A++～C）與高雄區比序積點。</p>
-<div class="howto">用法：每科可切換填「<b>答對</b>」或「<b>答錯</b>」題數；數學另填非選得分、英語分閱讀與聽力填寫。數字一輸入，下方標示與上方總覽就會自動更新，不用按送出。</div>
+<p class="sub">115 學年・輸入答錯題數，<b>即時換算</b>五科等級標示（A++～C）與高雄區比序積點。</p>
+<div class="howto">用法：每科統一填「<b>答錯</b>」題數，系統會自動換算成答對題數；數學另填非選得分、英語分閱讀與聽力填寫。數字一輸入，下方標示與上方總覽就會自動更新，不用按送出。</div>
 </header>
 
 <!-- 即時總覽 -->
@@ -253,19 +248,15 @@ footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
 <section class="card" aria-labelledby="h-zh">
 <div class="card-head">
 <span class="badge">國</span>
-<div><h2 id="h-zh">國文</h2><div class="method">以答對題數判定</div></div>
+<div><h2 id="h-zh">國文</h2><div class="method">填答錯題數，換算答對後判定</div></div>
 <div class="total">共 42 題</div>
 </div>
 <div class="field">
-<span class="flabel" id="lb-zh">輸入題數</span>
-<div class="seg" role="group" aria-label="國文輸入方式">
-<button type="button" data-mode-btn="zh:right" aria-pressed="true">答對題數</button>
-<button type="button" data-mode-btn="zh:wrong" aria-pressed="false">答錯題數</button>
-</div>
+<span class="flabel" id="lb-zh">答錯題數</span>
 <div class="countrow">
-<button type="button" class="stepper" data-step="zh:-1" aria-label="國文題數減一">−</button>
+<button type="button" class="stepper" data-step="zh:-1" aria-label="國文答錯題數減一">−</button>
 <input id="in-zh" type="number" inputmode="numeric" min="0" max="42" step="1" placeholder="0" aria-labelledby="lb-zh" />
-<button type="button" class="stepper" data-step="zh:1" aria-label="國文題數加一">＋</button>
+<button type="button" class="stepper" data-step="zh:1" aria-label="國文答錯題數加一">＋</button>
 </div>
 <div class="complement" id="comp-zh"></div>
 <div class="ferr" id="err-zh" role="alert"></div>
@@ -277,19 +268,15 @@ footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
 <section class="card" aria-labelledby="h-soc">
 <div class="card-head">
 <span class="badge">社</span>
-<div><h2 id="h-soc">社會</h2><div class="method">以答對題數判定</div></div>
+<div><h2 id="h-soc">社會</h2><div class="method">填答錯題數，換算答對後判定</div></div>
 <div class="total">共 54 題</div>
 </div>
 <div class="field">
-<span class="flabel" id="lb-soc">輸入題數</span>
-<div class="seg" role="group" aria-label="社會輸入方式">
-<button type="button" data-mode-btn="soc:right" aria-pressed="true">答對題數</button>
-<button type="button" data-mode-btn="soc:wrong" aria-pressed="false">答錯題數</button>
-</div>
+<span class="flabel" id="lb-soc">答錯題數</span>
 <div class="countrow">
-<button type="button" class="stepper" data-step="soc:-1" aria-label="社會題數減一">−</button>
+<button type="button" class="stepper" data-step="soc:-1" aria-label="社會答錯題數減一">−</button>
 <input id="in-soc" type="number" inputmode="numeric" min="0" max="54" step="1" placeholder="0" aria-labelledby="lb-soc" />
-<button type="button" class="stepper" data-step="soc:1" aria-label="社會題數加一">＋</button>
+<button type="button" class="stepper" data-step="soc:1" aria-label="社會答錯題數加一">＋</button>
 </div>
 <div class="complement" id="comp-soc"></div>
 <div class="ferr" id="err-soc" role="alert"></div>
@@ -301,19 +288,15 @@ footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
 <section class="card" aria-labelledby="h-nat">
 <div class="card-head">
 <span class="badge">自</span>
-<div><h2 id="h-nat">自然</h2><div class="method">以答對題數判定</div></div>
+<div><h2 id="h-nat">自然</h2><div class="method">填答錯題數，換算答對後判定</div></div>
 <div class="total">共 50 題</div>
 </div>
 <div class="field">
-<span class="flabel" id="lb-nat">輸入題數</span>
-<div class="seg" role="group" aria-label="自然輸入方式">
-<button type="button" data-mode-btn="nat:right" aria-pressed="true">答對題數</button>
-<button type="button" data-mode-btn="nat:wrong" aria-pressed="false">答錯題數</button>
-</div>
+<span class="flabel" id="lb-nat">答錯題數</span>
 <div class="countrow">
-<button type="button" class="stepper" data-step="nat:-1" aria-label="自然題數減一">−</button>
+<button type="button" class="stepper" data-step="nat:-1" aria-label="自然答錯題數減一">−</button>
 <input id="in-nat" type="number" inputmode="numeric" min="0" max="50" step="1" placeholder="0" aria-labelledby="lb-nat" />
-<button type="button" class="stepper" data-step="nat:1" aria-label="自然題數加一">＋</button>
+<button type="button" class="stepper" data-step="nat:1" aria-label="自然答錯題數加一">＋</button>
 </div>
 <div class="complement" id="comp-nat"></div>
 <div class="ferr" id="err-nat" role="alert"></div>
@@ -329,15 +312,11 @@ footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
 <div class="total">選擇共 <span id="math-total-label">25</span> 題<br />非選滿分 <span id="math-non-label">6</span> 分</div>
 </div>
 <div class="field">
-<span class="flabel" id="lb-math">選擇題</span>
-<div class="seg" role="group" aria-label="數學選擇題輸入方式">
-<button type="button" data-mode-btn="math:right" aria-pressed="true">答對題數</button>
-<button type="button" data-mode-btn="math:wrong" aria-pressed="false">答錯題數</button>
-</div>
+<span class="flabel" id="lb-math">選擇題・答錯題數</span>
 <div class="countrow">
-<button type="button" class="stepper" data-step="math:-1" aria-label="數學選擇題數減一">−</button>
+<button type="button" class="stepper" data-step="math:-1" aria-label="數學選擇答錯題數減一">−</button>
 <input id="in-math" type="number" inputmode="numeric" min="0" max="25" step="1" placeholder="0" aria-labelledby="lb-math" />
-<button type="button" class="stepper" data-step="math:1" aria-label="數學選擇題數加一">＋</button>
+<button type="button" class="stepper" data-step="math:1" aria-label="數學選擇答錯題數加一">＋</button>
 </div>
 <div class="complement" id="comp-math"></div>
 <div class="ferr" id="err-math" role="alert"></div>
@@ -364,29 +343,21 @@ footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
 </div>
 <div class="two-col">
 <div class="field">
-<span class="flabel" id="lb-engR">閱讀測驗</span>
-<div class="seg" role="group" aria-label="英語閱讀輸入方式">
-<button type="button" data-mode-btn="engR:right" aria-pressed="true">答對題數</button>
-<button type="button" data-mode-btn="engR:wrong" aria-pressed="false">答錯題數</button>
-</div>
+<span class="flabel" id="lb-engR">閱讀測驗・答錯題數</span>
 <div class="countrow">
-<button type="button" class="stepper" data-step="engR:-1" aria-label="閱讀題數減一">−</button>
+<button type="button" class="stepper" data-step="engR:-1" aria-label="閱讀答錯題數減一">−</button>
 <input id="in-engR" type="number" inputmode="numeric" min="0" max="43" step="1" placeholder="0" aria-labelledby="lb-engR" />
-<button type="button" class="stepper" data-step="engR:1" aria-label="閱讀題數加一">＋</button>
+<button type="button" class="stepper" data-step="engR:1" aria-label="閱讀答錯題數加一">＋</button>
 </div>
 <div class="complement" id="comp-engR"></div>
 <div class="ferr" id="err-engR" role="alert"></div>
 </div>
 <div class="field">
-<span class="flabel" id="lb-engL">聽力測驗</span>
-<div class="seg" role="group" aria-label="英語聽力輸入方式">
-<button type="button" data-mode-btn="engL:right" aria-pressed="true">答對題數</button>
-<button type="button" data-mode-btn="engL:wrong" aria-pressed="false">答錯題數</button>
-</div>
+<span class="flabel" id="lb-engL">聽力測驗・答錯題數</span>
 <div class="countrow">
-<button type="button" class="stepper" data-step="engL:-1" aria-label="聽力題數減一">−</button>
+<button type="button" class="stepper" data-step="engL:-1" aria-label="聽力答錯題數減一">−</button>
 <input id="in-engL" type="number" inputmode="numeric" min="0" max="21" step="1" placeholder="0" aria-labelledby="lb-engL" />
-<button type="button" class="stepper" data-step="engL:1" aria-label="聽力題數加一">＋</button>
+<button type="button" class="stepper" data-step="engL:1" aria-label="聽力答錯題數加一">＋</button>
 </div>
 <div class="complement" id="comp-engL"></div>
 <div class="ferr" id="err-engL" role="alert"></div>
@@ -494,8 +465,7 @@ return lo + "–" + hi + " 題";
 }
 
 /* ---------- 輸入狀態 ---------- */
-// mode: 'right' 填答對 / 'wrong' 填答錯
-var modes = { zh:"right", soc:"right", nat:"right", math:"right", engR:"right", engL:"right"};
+// 統一填答錯題數：correct = total - 輸入值
 var totals = { zh:42, soc:54, nat:50, engR:ENG_READ_TOTAL, engL:ENG_LIST_TOTAL};
 function mathChoiceTotal(){ var v = parseInt($("set-math-total").value,10); return (isFinite(v)&&v>0)? v: 25;}
 function mathNonTotal(){ var v = parseInt($("set-math-non").value,10); return (isFinite(v)&&v>0)? v: 6;}
@@ -518,8 +488,8 @@ if (v < 0 || v > total){
 errEl.textContent = "題數要在 0～" + total + " 題之間。"; errEl.classList.add("show"); el.classList.add("invalid");
 if (compEl) compEl.textContent = ""; return { state:"invalid"};
 }
-var correct = (modes[key]==="right")? v: total - v;
-var wrong = total - correct;
+var wrong = v;
+var correct = total - v;
 if (compEl) compEl.innerHTML = "答對 <b>" + correct + "</b> 題・答錯 <b>" + wrong + "</b> 題（共 " + total + " 題）";
 return { state:"ok", correct:correct, wrong:wrong, total:total};
 }
@@ -539,15 +509,15 @@ function renderCountSubject(key){
 var cfg = COUNT_SUBJECTS[key];
 var f = readField(key);
 var resEl = $("res-"+key);
-if (f.state!== "ok"){ finalGrades[key]=null; emptyResult(resEl, f.state==="invalid"? "題數有誤，修正後會自動換算。": "輸入答對或答錯題數後，這裡會顯示等級標示。"); return;}
+if (f.state!== "ok"){ finalGrades[key]=null; emptyResult(resEl, f.state==="invalid"? "題數有誤，修正後會自動換算。": "輸入答錯題數後，這裡會顯示等級標示。"); return;}
 var r = gradeFromBands(f.correct, cfg.bands);
 finalGrades[key] = r.grade;
-var main = "答對 " + f.correct + " 題・本標示範圍 " + bandRangeText(cfg.bands, r.idx, false, cfg.total);
+var main = "答錯 " + f.wrong + " 題（答對 " + f.correct + " 題）・本標示範圍 " + bandRangeText(cfg.bands, r.idx, false, cfg.total);
 var hint;
 if (r.idx === 0) hint = "已是最高標示，漂亮！";
 else {
 var need = cfg.bands[r.idx-1][0] - f.correct;
-hint = "再答對 <b>" + need + "</b> 題可達 <b>" + cfg.bands[r.idx-1][1] + "</b>（" + levelOf(cfg.bands[r.idx-1][1]) + "）";
+hint = "再少錯 <b>" + need + "</b> 題可達 <b>" + cfg.bands[r.idx-1][1] + "</b>（" + levelOf(cfg.bands[r.idx-1][1]) + "）";
 }
 resEl.innerHTML = gradeResultHTML(r.grade, main, hint);
 }
@@ -575,7 +545,7 @@ $("math-formula").innerHTML = "選擇答對 <b>" + f.correct + "</b> 題；再�
 emptyResult(resEl, "還差非選得分：填入後會自動算出加權分數與標示。");
 } else {
 $("math-formula").innerHTML = "加權分數 ＝ 選擇答對 ÷ " + mathChoiceTotal() + " × 85 ＋ 非選得分 ÷ " + nonTotal + " × 15（四捨五入至小數第二位）";
-emptyResult(resEl, (f.state==="invalid"||nonInvalid)? "輸入有誤，修正後會自動換算。": "輸入選擇題答對（或答錯）題數與非選得分後，這裡會顯示加權分數與標示。");
+emptyResult(resEl, (f.state==="invalid"||nonInvalid)? "輸入有誤，修正後會自動換算。": "輸入選擇題答錯題數與非選得分後，這裡會顯示加權分數與標示。");
 }
 return;
 }
@@ -615,7 +585,7 @@ if (fr.state!== "ok" || fl.state!== "ok"){
 finalGrades.eng = null;
 if (fr.state === "invalid" || fl.state === "invalid") emptyResult(resEl, "題數有誤，修正後會自動換算。");
 else if (fr.state === "ok" || fl.state === "ok") emptyResult(resEl, "閱讀與聽力都填好後，會自動算出英語加權分數與整科標示。");
-else emptyResult(resEl, "輸入閱讀與聽力的答對（或答錯）題數後，這裡會顯示加權分數與標示。");
+else emptyResult(resEl, "輸入閱讀與聽力的答錯題數後，這裡會顯示加權分數與標示。");
 $("eng-formula").innerHTML = "加權分數 ＝ 閱讀答對 ÷ 43 × 80 ＋ 聽力答對 ÷ 21 × 20（四捨五入至小數第二位）";
 return;
 }
@@ -693,16 +663,6 @@ document.querySelectorAll(".non-max-label").forEach(function(el){ el.textContent
 renderAll();
 });
 
-document.querySelectorAll("[data-mode-btn]").forEach(function(btn){
-btn.addEventListener("click", function(){
-var parts = btn.getAttribute("data-mode-btn").split(":");
-modes[parts[0]] = parts[1];
-document.querySelectorAll('[data-mode-btn^="' + parts[0] + ':"]').forEach(function(b){
-b.setAttribute("aria-pressed", b === btn? "true": "false");
-});
-renderAll();
-});
-});
 document.querySelectorAll("[data-step]").forEach(function(btn){
 btn.addEventListener("click", function(){
 var parts = btn.getAttribute("data-step").split(":");
@@ -720,10 +680,6 @@ renderAll();
 $("btn-clear").addEventListener("click", function(){
 ["zh","soc","nat","math","engR","engL","math-non"].forEach(function(k){ $("in-"+k).value = "";});
 $("in-writing").value = "";
-Object.keys(modes).forEach(function(k){ modes[k] = "right";});
-document.querySelectorAll("[data-mode-btn]").forEach(function(b){
-b.setAttribute("aria-pressed", b.getAttribute("data-mode-btn").split(":")[1] === "right"? "true": "false");
-});
 renderAll();
 $("in-zh").focus();
 });
