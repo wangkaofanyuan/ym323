@@ -206,6 +206,48 @@ background:var(--surface);color:var(--ink);
 }
 .btn:active{background:var(--surface-2)}
 
+/* ---------- band section ---------- */
+.bandsec{margin-top:20px}
+.bandsec[hidden]{display:none}
+.bandsec h2{font-size:20px;font-weight:900;margin:0 0 6px}
+.bandsec .lead{color:var(--ink-2);font-size:14.5px;margin:0 0 14px}
+.band-headline{
+background:var(--accent-soft);border-radius:12px;padding:12px 16px;
+font-size:16px;font-variant-numeric:tabular-nums;margin-bottom:14px;
+}
+.band-headline b{font-size:19px;font-weight:900}
+.band-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:760px){.band-grid{grid-template-columns:1fr 1fr}}
+.band-panel{background:var(--surface-2);border-radius:12px;padding:14px 16px}
+.band-panel h3{margin:0 0 4px;font-size:16.5px;font-weight:900}
+.band-panel h3 span{color:var(--ink-3);font-size:13px;font-weight:500;margin-left:6px}
+.band-rows{margin-top:8px}
+.band-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.band-row:first-child{border-top:0}
+.band-row .bk{font-size:14px;color:var(--ink-2)}
+.band-row .bv{font-size:15px;font-weight:700;text-align:right}
+.band-row .bv b{font-size:17px;font-weight:900}
+.band-row .bv .sub{display:block;font-size:12.5px;font-weight:500;color:var(--ink-3)}
+.rankbar{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:12px;background:var(--surface)}
+.rankbar .seg-below{background:var(--accent)}
+.rankbar .seg-same{background:var(--bp)}
+.rankbar .seg-above{background:var(--ink-3)}
+.ranklegend{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:12.5px;color:var(--ink-2)}
+.ranklegend .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ranklegend .dot.d-below{background:var(--accent)}
+.ranklegend .dot.d-same{background:var(--bp)}
+.ranklegend .dot.d-above{background:var(--ink-3)}
+.band-tablewrap{margin-top:18px}
+.band-tablewrap h3{font-size:15.5px;font-weight:900;margin:0 0 4px}
+.band-tablewrap .tnote{font-size:13px;color:var(--ink-3);margin:0 0 8px}
+table.bandtable{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13.5px}
+table.bandtable th,table.bandtable td{padding:6px 4px;text-align:right;border-top:1px solid var(--line)}
+table.bandtable th{font-size:12.5px;color:var(--ink-2);font-weight:700;border-top:0;white-space:nowrap}
+table.bandtable th:first-child,table.bandtable td:first-child{text-align:left;font-weight:900}
+table.bandtable tr.mine td{background:var(--accent-soft);font-weight:700}
+table.bandtable tr.mine td:first-child{color:var(--accent)}
+.band-src{margin-top:14px;font-size:13px;color:var(--ink-3)}
+
 /* ---------- reference ---------- */
 .refsec{margin-top:34px}
 .refsec .lead{color:var(--ink-2);font-size:14.5px;margin:0 0 14px}
@@ -405,6 +447,26 @@ footer.src{margin-top:18px;font-size:13px;color:var(--ink-3)}
 </div>
 </section>
 
+<!-- 成績組距對照 -->
+<section class="card bandsec" id="band-section" hidden aria-labelledby="h-band">
+<h2 id="h-band">成績組距對照</h2>
+<p class="lead">依你的三等級總分，對照這次模擬考的成績組距表，看你在高雄區與全國分別落在什麼位置。</p>
+<div class="band-headline" id="band-headline"></div>
+<div class="band-grid">
+<div class="band-panel" id="band-region"></div>
+<div class="band-panel" id="band-nation"></div>
+</div>
+<div class="band-tablewrap">
+<h3>完整組距分布</h3>
+<p class="tnote">「累計」是該分數以上人數占總人數的百分比；你所在的那一列已標示出來。</p>
+<table class="bandtable">
+<thead><tr><th scope="col">總分</th><th scope="col">高雄區人數</th><th scope="col">高雄區累計</th><th scope="col">全國人數</th><th scope="col">全國累計</th></tr></thead>
+<tbody id="band-tbody"></tbody>
+</table>
+</div>
+<p class="band-src">資料來源：115 學年康軒教育會考模擬考（2026/10/29–30，高雄區）校際能力等級成績組距表（RK401A）。高雄區總人數以表內加總 6,206 人為準，全國 22,519 人；平均積分同出自該表。</p>
+</section>
+
 <!-- 對照表 -->
 <section class="refsec" aria-labelledby="h-ref">
 <h2 id="h-ref">五科等級標示對照表</h2>
@@ -445,6 +507,13 @@ nat: { name:"自然", total:50, bands:[[48,"A++"],[47,"A+"],[44,"A"],[37,"B++"],
 var MATH_BANDS = [[91.60,"A++"],[86.60,"A+"],[78.20,"A"],[69.60,"B++"],[59.40,"B+"],[39.70,"B"],[0,"C"]];
 var ENG_BANDS = [[98.14,"A++"],[96.28,"A+"],[92.38,"A"],[86.93,"B++"],[77.50,"B+"],[45.91,"B"],[0,"C"]];
 var ENG_READ_TOTAL = 43, ENG_LIST_TOTAL = 21;
+
+/* ---------- 成績組距資料（RK401A 校際能力等級成績組距表） ---------- */
+// score_bands 為三等級總分組距（滿分 30），by_score 與 cum_pct 依組距由高到低排列
+// cum_pct 為「該分數以上」人數占總人數的累計百分比（含本組距）
+var SCORE_BANDS = [30,28,26,24,22,20,18,16,14,12,10];
+var BAND_REGION = { label:"高雄區", by_score:[633,442,428,504,766,1413,638,423,348,297,314], total:6206, cum_pct:[10.2,17.3,24.2,32.3,44.7,67.5,77.7,84.5,90.2,94.9,100.0], mean:20.87};
+var BAND_NATION = { label:"全國", by_score:[1689,1359,1370,1795,2946,5264,2660,1836,1374,1065,1161], total:22519, cum_pct:[7.5,13.5,19.6,27.6,40.7,64.0,75.9,84.0,90.1,94.8,100.0], mean:20.36};
 
 var POINTS = {"A++":7,"A+":6,"A":5,"B++":4,"B+":3,"B":2,"C":1};
 var GRADE_CLASS = {"A++":"g-Aplus2","A+":"g-Aplus","A":"g-A","B++":"g-Bplus2","B+":"g-Bplus","B":"g-B","C":"g-C"};
@@ -621,6 +690,7 @@ $("sum-points").innerHTML = "—<small> / 35 點</small>";
 $("sum-level").innerHTML = "—<small> / 30 分</small>";
 $("sum-detail").textContent = "五科都輸入後，這裡會顯示各科標示明細。";
 $("sum-seq").textContent = "";
+$("band-section").hidden = true;
 return;
 }
 var pts = 0, lvl = 0, cA = 0, cB = 0, cC = 0;
@@ -639,6 +709,48 @@ var seq = seqOrder.map(function(k){ return seqNames[k] + " " + finalGrades[k];})
 var seqText = "<b>同分比序（規則 3、4）單科順序：</b>" + seq;
 if (writing!== "") seqText += "・<b>寫作（規則 5）：</b>" + writing + " 級分";
 $("sum-seq").innerHTML = seqText;
+renderBandSection(lvl);
+}
+
+/* ---------- 成績組距對照 ---------- */
+function fmtInt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");}
+function fmtPct1(x){ return x.toFixed(1) + "%";}
+
+function bandPanelHTML(data, idx, myScore){
+var total = data.total;
+var n = data.by_score[idx];
+var share = n / total * 100;
+var cumPct = data.cum_pct[idx];
+var cumCount = 0;
+for (var i=0;i<=idx;i++) cumCount += data.by_score[i];
+var aboveCount = cumCount - n;
+var belowCount = total - cumCount;
+var abovePct = idx === 0? 0: data.cum_pct[idx-1];
+var belowPct = 100 - cumPct;
+var diff = round2(myScore - data.mean);
+var diffText = diff > 0? "你比平均高 <b>" + fmt2(diff) + "</b> 分": (diff < 0? "你比平均低 <b>" + fmt2(-diff) + "</b> 分": "剛好等於平均");
+return "<h3>" + data.label + "<span>共 " + fmtInt(total) + " 人</span></h3>" +
+'<div class="band-rows">' +
+'<div class="band-row"><span class="bk">本組距人數</span><span class="bv"><b>' + fmtInt(n) + '</b> 人<span class="sub">占 ' + fmtPct1(share) + "</span></span></div>" +
+'<div class="band-row"><span class="bk">累計百分比（此分數以上）</span><span class="bv"><b>' + fmtPct1(cumPct) + '</b><span class="sub">共 ' + fmtInt(cumCount) + " 人</span></span></div>" +
+'<div class="band-row"><span class="bk">分數在你之上</span><span class="bv">' + fmtPct1(abovePct) + '<span class="sub">' + fmtInt(aboveCount) + " 人</span></span></div>" +
+'<div class="band-row"><span class="bk">你贏過的人</span><span class="bv">' + fmtPct1(belowPct) + '<span class="sub">' + fmtInt(belowCount) + " 人分數比你低</span></span></div>" +
+'<div class="band-row"><span class="bk">平均積分</span><span class="bv">' + fmt2(data.mean) + ' 分<span class="sub">' + diffText + "</span></span></div>" +
+"</div>" +
+'<div class="rankbar" aria-hidden="true"><div class="seg-below" style="width:' + belowPct.toFixed(1) + '%"></div><div class="seg-same" style="width:' + share.toFixed(1) + '%"></div><div class="seg-above" style="width:' + abovePct.toFixed(1) + '%"></div></div>' +
+'<div class="ranklegend"><span><span class="dot d-below"></span>分數比你低 ' + fmtPct1(belowPct) + '</span><span><span class="dot d-same"></span>與你同組距 ' + fmtPct1(share) + '</span><span><span class="dot d-above"></span>分數比你高 ' + fmtPct1(abovePct) + "</span></div>";
+}
+
+function renderBandSection(myScore){
+var idx = SCORE_BANDS.indexOf(myScore);
+if (idx < 0){ for (var i=0;i<SCORE_BANDS.length;i++){ if (myScore >= SCORE_BANDS[i]){ idx = i; break;}}}
+if (idx < 0) idx = SCORE_BANDS.length - 1;
+$("band-section").hidden = false;
+$("band-headline").innerHTML = "你的三等級總分是 <b>" + myScore + " 分</b>（滿分 30 分），落在 <b>" + SCORE_BANDS[idx] + " 分</b>組距。";
+$("band-region").innerHTML = bandPanelHTML(BAND_REGION, idx, myScore);
+$("band-nation").innerHTML = bandPanelHTML(BAND_NATION, idx, myScore);
+var rows = $("band-tbody").querySelectorAll("tr");
+rows.forEach(function(tr, i){ tr.className = (i === idx)? "mine": "";});
 }
 
 function renderAll(){
@@ -705,6 +817,15 @@ html += '<div class="refcard"><h3>英語分項<span>能力等級</span></h3>' +
 '<div class="refrow"><span class="rg">聽力 基礎以上</span><span class="rr">13–21 題</span></div>' +
 '<div class="refrow"><span class="rg">聽力 待加強</span><span class="rr">0–12 題</span></div></div>';
 $("refgrid").innerHTML = html;
+})();
+
+/* ---------- 組距分布表 ---------- */
+(function buildBandTable(){
+var html = "";
+for (var i=0;i<SCORE_BANDS.length;i++){
+html += "<tr><td>" + SCORE_BANDS[i] + " 分</td><td>" + fmtInt(BAND_REGION.by_score[i]) + "</td><td>" + fmtPct1(BAND_REGION.cum_pct[i]) + "</td><td>" + fmtInt(BAND_NATION.by_score[i]) + "</td><td>" + fmtPct1(BAND_NATION.cum_pct[i]) + "</td></tr>";
+}
+$("band-tbody").innerHTML = html;
 })();
 
 renderAll();
